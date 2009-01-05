@@ -6,13 +6,15 @@
 
 (defmacro spiffy-run-in-directory (dir &rest body)
   "Execute code in a particular current working directory"
-  (let ((retval (make-symbol "retval")))
-    `(let ((original-dir (spiffy-cwd)))
+  (let ((retval-var (make-symbol "retval"))
+        (original-dir-var (make-symbol "original-dir")))
+    `(let ((,original-dir-var (spiffy-cwd)))
        (cd ,dir)
-       (setq ,retval (funcall (lambda () ,@body)))
-       (cd original-dir)
-       ,retval)))
+       (setq ,retval-var (funcall (lambda () ,@body)))
+       (cd ,original-dir-var)
+       ,retval-var)))
   
+; XXX test me
 (defun spiffy-spec-binary-to-run-for (filename)
   (let ((merb-root (spiffy-merb-root-dir-for filename)))
     (if merb-root
@@ -28,12 +30,15 @@
    parts
    " "))
 
+; XXX test me
 (defun spiffy-parent-directory (filename)
   (file-name-as-directory (expand-file-name (concat(file-name-as-directory filename) ".."))))
 
+; XXX test me
 (defun spiffy-is-merb-root-dir (dir)
   (file-exists-p (concat (file-name-as-directory dir) "bin/merb")))
 
+; XXX test me
 (defun spiffy-merb-root-dir-for (filename)
   (let ((as-dir (file-name-as-directory filename)))
     (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
@@ -42,6 +47,7 @@
           as-dir
         (spiffy-merb-root-dir-for (spiffy-parent-directory filename))))))
 
+; XXX test me
 (defun spiffy-run-spec-under-point ()
   (interactive)
   (spiffy-run-in-directory

@@ -6,11 +6,13 @@
 
 (defmacro spiffy-run-in-directory (dir &rest body)
   "Execute code in a particular current working directory"
-  `(let ((original-dir (spiffy-cwd)))
-    (cd ,dir)
-    ,@body
-    (cd original-dir)))
-
+  (let ((retval (make-symbol "retval")))
+    `(let ((original-dir (spiffy-cwd)))
+       (cd ,dir)
+       (setq ,retval (funcall (lambda () ,@body)))
+       (cd original-dir)
+       ,retval)))
+  
 (defun spiffy-spec-binary-to-run-for (filename)
   (let ((merb-root (spiffy-merb-root-dir-for filename)))
     (if merb-root

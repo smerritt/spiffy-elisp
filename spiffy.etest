@@ -24,7 +24,6 @@
 (deftest '(ok-string= 2) 'etest-string=)
 
 ;; end helper functions
-(cd "/tmp")
 
 (etest
  ("test helpers"
@@ -34,7 +33,13 @@
   (ok-string= (funcall (lambda () "a-string")) "a-string")
   (ok-string= "a-string" (funcall (lambda () "a-string"))))
  ("spiffy-cwd"
-  (ok-string= (spiffy-cwd) "/tmp/"))
+  (ok-string= (funcall (lambda () (cd "/tmp") (spiffy-cwd)))
+              "/tmp/"))
+ ("spiffy-run-in-other-directory"
+  (ok-string= (spiffy-run-in-directory "/" (spiffy-cwd))
+              "/")
+  (ok-string= (spiffy-run-in-directory "/usr/bin" (spiffy-cwd))
+              "/usr/bin/"))
  ("spiffy-make-shell-command"
   (ok-string= (spiffy-make-shell-command "ls" "-l")
               "ls -l")

@@ -1,0 +1,46 @@
+(require 'spiffy)
+(require 'etest)
+
+;; helper functions
+;; consider moving these into somewhere globally reachable
+
+(defun eval-if-not-string (thing)
+  "If it's a string, leave it be. Else, eval it (thanks, etest)"
+  ;; seriously, this:
+  ;;   (ok-string= (function-that-returns-a-string) "a-string")
+  ;; does not make me think that ok-string= sometimes needs to eval its arguments.
+  ;; This interface pretty much blows.
+  (if (stringp thing) thing (eval thing)))
+
+(defun etest-string= (arg1 arg2)
+  (let
+      ((s1 (eval-if-not-string arg1))
+       (s2 (eval-if-not-string arg2)))
+    (let ((equality (string= s1 s2)))
+      (list :result equality
+            :comments (unless equality
+                        (format "\"%s\" isn't string= to \"%s\"" s1 s2))))))
+  
+(deftest '(ok-string= 2) 'etest-string=)
+
+;; end helper functions
+(cd "/tmp")
+
+(etest
+ ("test helpers"
+  ("ok-string=")
+  (ok-string= "" "")
+  (ok-string= "foo" "foo")
+  (ok-string= (funcall (lambda () "a-string")) "a-string")
+  (ok-string= "a-string" (funcall (lambda () "a-string"))))
+ ("spiffy-cwd"
+  (ok-string= (spiffy-cwd) "/tmp/"))
+ ("spiffy-make-shell-command"
+  (ok-string= (spiffy-make-shell-command "ls" "-l")
+              "ls -l")
+  (ok-string= (spiffy-make-shell-command "cat" "file\twith\ttabs")
+              "cat \"file\twith\ttabs\"")
+  (ok-string= (spiffy-make-shell-command "cat" "file with spaces")
+              "cat \"file with spaces\"")
+  (ok-string= (spiffy-make-shell-command "/path/to/spec" "-c" "-l" "40" "my-spec.rb")
+              "/path/to/spec -c -l 40 my-spec.rb")))

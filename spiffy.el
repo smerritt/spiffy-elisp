@@ -30,11 +30,9 @@
    parts
    " "))
 
-; XXX test me
 (defun spiffy-parent-directory (filename)
   (file-name-as-directory (expand-file-name (concat(file-name-as-directory filename) ".."))))
 
-; XXX test me
 (defun spiffy-is-merb-root-dir (dir)
   (file-exists-p (concat (file-name-as-directory dir) "bin/merb")))
 

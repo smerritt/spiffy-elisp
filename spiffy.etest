@@ -12,6 +12,9 @@
   ;; This interface pretty much blows.
   (if (stringp thing) thing (eval thing)))
 
+; yes, I know (ok (equal (string-returning-function) "blah")) would work. that's not the point.
+; the point is to write my own test helper and see how easy it is and what
+; hoops I have to jump through.
 (defun etest-string= (arg1 arg2)
   (let
       ((s1 (eval-if-not-string arg1))

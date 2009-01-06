@@ -28,6 +28,7 @@
 (etest
  ("test helpers"
   ("ok-string=")
+  ; XXX how do I put a negative test case in here?
   (ok-string= "" "")
   (ok-string= "foo" "foo")
   (ok-string= (funcall (lambda () "a-string")) "a-string")

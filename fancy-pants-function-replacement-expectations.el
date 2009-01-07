@@ -32,7 +32,6 @@
      ; however, for consistency, it should be (food beer) or ('food 'beer).
      ; not sure what to do here...
      (food beer)
-     (print (symbol-function 'food))
      (food)))
 
   (desc "error out on unbound function")

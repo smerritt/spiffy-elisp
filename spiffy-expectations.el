@@ -1,11 +1,6 @@
 (require 'el-expectations)
 (require 'spiffy)
 
-(defun eval-and-execute-expectations-buffer ()
-  (interactive)
-  (eval-buffer)
-  (expectations-execute))
-
 (expectations
   ;; generic stuff
   (desc "spiffy-cwd")

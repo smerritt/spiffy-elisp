@@ -8,11 +8,13 @@
        ((funcsym (car ',spec))       ; XXX duplication: "(car ',spec)"
         (funcbody (cdr ',spec))
         (original-function (symbol-function (car ',spec))))
-;;     (debug)
-     (ad-safe-fset funcsym (car funcbody))  ;;; XXX this car is weird
+     (ad-safe-fset 
+      funcsym 
+      (if (symbolp funcbody)
+          (symbol-function funcbody)
+        (car funcbody)))
      (setq ,retval-var (funcall (lambda () ,@body)))
      (ad-safe-fset funcsym original-function)
-     ;; put it back here
      ,retval-var)))
   
   

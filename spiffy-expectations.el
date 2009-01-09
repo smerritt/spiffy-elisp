@@ -1,5 +1,6 @@
 (require 'el-expectations)
 (require 'spiffy)
+(require 'fancy-pants-function-replacement)
 
 (expectations
   ;; generic stuff
@@ -61,6 +62,13 @@
     (mocklet
         (((spiffy-merb-root-dir-for "/somewhere/spec/foo.rb") => nil))
       (spiffy-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
+
+  (desc "spiffy-merb-root-dir-for")
+  (expect "/my/project/"
+    (with-temporary-function-replacement
+     (file-exists-p (lambda (file) (equal file "/my/project/bin/merb")))
+     (spiffy-merb-root-dir-for "/my/project/spec/models/foobar_spec.rb")))
+   
 )
 
 

@@ -14,7 +14,6 @@
        (cd ,original-dir-var)
        ,retval-var)))
   
-; XXX test me
 (defun spiffy-spec-binary-to-run-for (filename)
   (let ((merb-root (spiffy-merb-root-dir-for filename)))
     (if merb-root
@@ -36,7 +35,6 @@
 (defun spiffy-is-merb-root-dir (dir)
   (file-exists-p (concat (file-name-as-directory dir) "bin/merb")))
 
-; XXX test me
 (defun spiffy-merb-root-dir-for (filename)
   (let ((as-dir (file-name-as-directory filename)))
     (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))

@@ -2,6 +2,8 @@
 (require 'spiffy)
 (require 'fancy-pants-function-replacement)
 
+(setq tempdir (make-temp-file "spiffy-expectations" t))
+
 (expectations
   ;; generic stuff
   (desc "spiffy-cwd")
@@ -39,6 +41,21 @@
     (spiffy-run-in-directory 
      "/usr/bin"
      (spiffy-cwd)))
+
+  (desc "spiffy-find-files")
+  ; XXX test not portable due to hardcoded slashes, but I'm lazy
+  (expect (list
+           (concat tempdir "/bar")
+           (concat tempdir "/foo")
+           (concat tempdir "/subdir/bar"))
+    (progn
+      (append-to-file 5 10 (concat tempdir "/bar"))
+      (append-to-file 5 10 (concat tempdir "/foo"))
+      (make-directory (concat tempdir "/subdir"))
+      (append-to-file 5 10 (concat tempdir "/subdir/bar"))
+      (sort
+       (spiffy-find-files tempdir)
+       (lambda (a b) (string< a b)))))
 
   ;; merb-specific stuff
   (desc "spiffy-is-merb-root-dir")

@@ -43,14 +43,63 @@
           as-dir
         (spiffy-merb-root-dir-for (spiffy-parent-directory filename))))))
 
+; I can't believe it's not built-in
+(defun filter (predicate list)
+  (if (null list)
+      '()
+    (if (funcall predicate (car list))
+        (cons (car list) (filter predicate (cdr list)))
+      (filter predicate (cdr list)))))
+
+(defun flatten (l)
+  (cond
+   ((atom l) l)
+   ((listp (car l)) (append (flatten (car l)) (flatten (cdr l))))
+   (t (append (list (car l)) (flatten (cdr l))))))
+
+(defun spiffy-useful-directory-files (directory)
+  (filter 
+   (lambda (filename) (and (not (string= filename ".")) (not (string= filename ".."))))
+   (directory-files directory)))
+
+(defun spiffy-find-interesting-files (interesting-p directory)
+  (filter interesting-p (spiffy-find-all-files directory)))
+
+; all files, including directories (notably, empty directories)
+(defun spiffy-find-all-files (directory)
+  (if (not (file-directory-p directory))
+      directory  ; base case: it's just a file
+    (flatten
+     (list
+      directory
+      (mapcar 'spiffy-find-all-files
+              (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
+                      (spiffy-useful-directory-files directory)))))))
+    
+; just files
+(defun spiffy-find-files (directory)
+  (filter 'file-regular-p (spiffy-find-all-files directory)))
+
 ; XXX test me
 (defun spiffy-run-spec-under-point ()
   (interactive)
+  (save-buffer)
   (spiffy-run-in-directory
-   "/Users/sam/awsm"    ; XXX totally punting here too
+   (spiffy-merb-root-dir-for (buffer-file-name))
    (compile
     (spiffy-make-shell-command
      (spiffy-spec-binary-to-run-for (buffer-file-name))
      "-l"
      (format "%d" (line-number-at-pos)) ; defaults to line number at point
+     (buffer-file-name)))))
+
+; XXX test + refactor with spiffy-run-spec-under-point
+(defun spiffy-run-spec-file ()
+  (interactive)
+  (save-buffer)
+  (spiffy-run-in-directory
+   (spiffy-merb-root-dir-for (buffer-file-name))
+   (compile
+    (spiffy-make-shell-command
+     (spiffy-spec-binary-to-run-for (buffer-file-name))
      (buffer-file-name)))))

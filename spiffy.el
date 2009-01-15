@@ -13,16 +13,16 @@
        (setq ,retval-var (funcall (lambda () ,@body)))
        (cd ,original-dir-var)
        ,retval-var)))
-  
+
 (defun spiffy-spec-binary-to-run-for (filename)
-  (let ((merb-root (spiffy-merb-root-dir-for filename)))
+  (let ((merb-root (spiffy-merb-root-for filename)))
     (if merb-root
         (concat (file-name-as-directory merb-root) "bin/spec")
       "spec")))    ; whatever the system's spec binary is
 
 (defun spiffy-make-shell-command (&rest parts)
-  (mapconcat 
-   (lambda (str) 
+  (mapconcat
+   (lambda (str)
      (if (string-match "[\t ]" str)
          (concat "\"" str "\"")
        str))
@@ -32,16 +32,16 @@
 (defun spiffy-parent-directory (filename)
   (file-name-as-directory (expand-file-name (concat(file-name-as-directory filename) ".."))))
 
-(defun spiffy-is-merb-root-dir (dir)
+(defun spiffy-is-merb-root (dir)
   (file-exists-p (concat (file-name-as-directory dir) "bin/merb")))
 
-(defun spiffy-merb-root-dir-for (filename)
+(defun spiffy-merb-root-for (filename)
   (let ((as-dir (file-name-as-directory filename)))
     (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
         nil    ; base case
-      (if (spiffy-is-merb-root-dir as-dir)
+      (if (spiffy-is-merb-root as-dir)
           as-dir
-        (spiffy-merb-root-dir-for (spiffy-parent-directory filename))))))
+        (spiffy-merb-root-for (spiffy-parent-directory filename))))))
 
 ; I can't believe it's not built-in
 (defun filter (predicate list)
@@ -58,7 +58,7 @@
    (t (append (list (car l)) (flatten (cdr l))))))
 
 (defun spiffy-useful-directory-files (directory)
-  (filter 
+  (filter
    (lambda (filename) (and (not (string= filename ".")) (not (string= filename ".."))))
    (directory-files directory)))
 
@@ -75,17 +75,34 @@
       (mapcar 'spiffy-find-all-files
               (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
                       (spiffy-useful-directory-files directory)))))))
-    
+
 ; just files
 (defun spiffy-find-files (directory)
   (filter 'file-regular-p (spiffy-find-all-files directory)))
+
+(defun spiffy-is-project-root (directory)
+  (file-exists-p (concat (file-name-as-directory directory) ".git")))
+
+; XXX refactor with spiffy-merb-root-dir-for
+(defun spiffy-project-root-for (filename)
+  (let ((as-dir (file-name-as-directory filename)))
+    (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
+        nil    ; base case
+      (if (spiffy-is-project-root as-dir)
+          as-dir
+        (spiffy-project-root-for (spiffy-parent-directory filename))))))
+
+(defun spiffy-command-t-files-for (file)
+  (filter
+   (lambda (f) (not (string-match ".git/" f)))
+   (spiffy-find-files (spiffy-project-root-for file))))
 
 ; XXX test me
 (defun spiffy-run-spec-under-point ()
   (interactive)
   (save-buffer)
   (spiffy-run-in-directory
-   (spiffy-merb-root-dir-for (buffer-file-name))
+   (spiffy-merb-root-for (buffer-file-name))
    (compile
     (spiffy-make-shell-command
      (spiffy-spec-binary-to-run-for (buffer-file-name))
@@ -98,7 +115,7 @@
   (interactive)
   (save-buffer)
   (spiffy-run-in-directory
-   (spiffy-merb-root-dir-for (buffer-file-name))
+   (spiffy-merb-root-for (buffer-file-name))
    (compile
     (spiffy-make-shell-command
      (spiffy-spec-binary-to-run-for (buffer-file-name))

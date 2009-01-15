@@ -38,7 +38,7 @@
     (spiffy-cwd))
 
   (expect "/usr/bin/"       ; second, it does execute its body in the named directory
-    (spiffy-run-in-directory 
+    (spiffy-run-in-directory
      "/usr/bin"
      (spiffy-cwd)))
 
@@ -57,35 +57,59 @@
        (spiffy-find-files tempdir)
        (lambda (a b) (string< a b)))))
 
+  ;; textmate-mode things
+  (desc "spiffy-files-in-project")
+  (expect (list
+           (concat tempdir "/myproj/model/beer.rb")
+           (concat tempdir "/myproj/spec/beer_spec.rb"))
+    (progn
+      (make-directory (concat tempdir "/myproj"))
+      (make-directory (concat tempdir "/myproj/model"))
+      (make-directory (concat tempdir "/myproj/spec"))
+      (make-directory (concat tempdir "/myproj/.git"))    ; not in result
+      (append-to-file 5 10 (concat tempdir "/myproj/model/beer.rb"))
+      (append-to-file 5 10 (concat tempdir "/myproj/spec/beer_spec.rb"))
+      (append-to-file 5 10 (concat tempdir "/myproj/.git/HEAD"))  ; not in result
+      (sort
+       (spiffy-command-t-files-for (concat tempdir "/myproj/model/beer.rb"))
+       (lambda (a b) (string< a b)))))
+
+  ;; stuff concerning Git projects (could be extended to others)
+  (desc "spiffy-is-project-root")
+  (expect t
+    (mocklet
+        (((file-exists-p "/path/to/project/.git") => t))
+      (spiffy-is-project-root "/path/to/project/")))
+
   ;; merb-specific stuff
-  (desc "spiffy-is-merb-root-dir")
+  (desc "spiffy-is-merb-root")
   (expect t
     (mocklet
         (((file-exists-p "/path/to/somewhere/bin/merb") => t))
-      (spiffy-is-merb-root-dir "/path/to/somewhere/")))
+      (spiffy-is-merb-root "/path/to/somewhere/")))
 
   (expect nil
     (mocklet
         (((file-exists-p "/path/to/somewhere/bin/merb") => nil))
-      (spiffy-is-merb-root-dir "/path/to/somewhere/")))
+      (spiffy-is-merb-root "/path/to/somewhere/")))
 
   (desc "spiffy-spec-binary-to-run-for")
   (expect "/somewhere/bin/spec"
     (mocklet
-        (((spiffy-merb-root-dir-for "/somewhere/spec/foo.rb") => "/somewhere"))
+        (((spiffy-merb-root-for "/somewhere/spec/foo.rb") => "/somewhere"))
       (spiffy-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
 
   (expect "spec"
     (mocklet
-        (((spiffy-merb-root-dir-for "/somewhere/spec/foo.rb") => nil))
+        (((spiffy-merb-root-for "/somewhere/spec/foo.rb") => nil))
       (spiffy-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
 
-  (desc "spiffy-merb-root-dir-for")
+  (desc "spiffy-merb-root-for")
   (expect "/my/project/"
     (with-temporary-function-replacement
      (file-exists-p (lambda (file) (equal file "/my/project/bin/merb")))
-     (spiffy-merb-root-dir-for "/my/project/spec/models/foobar_spec.rb")))
-   
+     (spiffy-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
+
 )
 
 

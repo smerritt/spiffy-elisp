@@ -43,14 +43,19 @@
           as-dir
         (spiffy-merb-root-for (spiffy-parent-directory filename))))))
 
-; I can't believe it's not built-in
-(defun filter (predicate list)
-  (if (null list)
-      '()
-    (if (funcall predicate (car list))
-        (cons (car list) (filter predicate (cdr list)))
-      (filter predicate (cdr list)))))
+; holy fucking crap
+; it's 2009
+; where is my tail-call optimization?
+(defun filter (predicate l)
+  (let ((result '()))
+    (while (not (null l))
+      (if (funcall predicate (car l))
+          (setq result (append result (list (car l)))))
+      (setq l (cdr l)))
+    result))
 
+; have to rewrite this iteratively too
+; and then load it into the computer by toggling switches on its front panel
 (defun flatten (l)
   (cond
    ((atom l) l)

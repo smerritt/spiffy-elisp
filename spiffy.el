@@ -73,13 +73,14 @@
 ; all files, including directories (notably, empty directories)
 (defun spiffy-find-all-files (directory)
   (if (not (file-directory-p directory))
-      directory  ; base case: it's just a file
-    (flatten
-     (list
-      directory
-      (mapcar 'spiffy-find-all-files
-              (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
-                      (spiffy-useful-directory-files directory)))))))
+      (list directory)  ; base case: it's just a file
+    (let ((files (list directory)))
+      ; XXX there's a reduce function in cl-extra... use it instead of mapcar+setq
+      (mapcar (lambda (subdir-files) (setq files (append files subdir-files)))
+              (mapcar 'spiffy-find-all-files
+                      (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
+                              (spiffy-useful-directory-files directory))))
+      files)))
 
 ; just files
 (defun spiffy-find-files (directory)

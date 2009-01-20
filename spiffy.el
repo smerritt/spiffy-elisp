@@ -90,9 +90,11 @@
           as-dir
         (spiffy-project-root-for (spiffy-parent-directory filename))))))
 
-(defun spiffy-command-t-files-for (file)
+(defun spiffy-project-files-for (file)
   (filter
-   (lambda (f) (not (string-match ".git/" f)))
+   (lambda (f) (and
+                (not (string-match ".git/" f))
+                (not (backup-file-name-p f))))
    (spiffy-find-files (spiffy-project-root-for file))))
 
 ; XXX test me
@@ -118,3 +120,15 @@
     (spiffy-make-shell-command
      (spiffy-spec-binary-to-run-for (buffer-file-name))
      (buffer-file-name)))))
+
+; XXX test me bozo
+(defun spiffy-open-file-in-project ()
+  (interactive)
+  (find-file (spiffy-pick-file-in-project)))
+
+(defun spiffy-pick-file-in-project ()
+  (let ((iswitchb-make-buflist-hook
+         (lambda ()
+           (setq iswitchb-temp-buflist
+                 (spiffy-project-files-for (buffer-file-name))))))
+    (iswitchb-read-buffer "Open file: ")))

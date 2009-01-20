@@ -58,7 +58,7 @@
        (lambda (a b) (string< a b)))))
 
   ;; textmate-mode things
-  (desc "spiffy-files-in-project")
+  (desc "spiffy-project-files-for")
   (expect (list
            (concat tempdir "/myproj/model/beer.rb")
            (concat tempdir "/myproj/spec/beer_spec.rb"))
@@ -70,8 +70,9 @@
       (append-to-file 5 10 (concat tempdir "/myproj/model/beer.rb"))
       (append-to-file 5 10 (concat tempdir "/myproj/spec/beer_spec.rb"))
       (append-to-file 5 10 (concat tempdir "/myproj/.git/HEAD"))  ; not in result
+      (append-to-file 5 10 (concat tempdir "/myproj/model/beer.rb~"))  ; not in result
       (sort
-       (spiffy-command-t-files-for (concat tempdir "/myproj/model/beer.rb"))
+       (spiffy-project-files-for (concat tempdir "/myproj/model/beer.rb"))
        (lambda (a b) (string< a b)))))
 
   ;; stuff concerning Git projects (could be extended to others)

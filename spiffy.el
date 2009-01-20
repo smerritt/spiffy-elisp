@@ -54,14 +54,6 @@
       (setq l (cdr l)))
     result))
 
-; have to rewrite this iteratively too
-; and then load it into the computer by toggling switches on its front panel
-(defun flatten (l)
-  (cond
-   ((atom l) l)
-   ((listp (car l)) (append (flatten (car l)) (flatten (cdr l))))
-   (t (append (list (car l)) (flatten (cdr l))))))
-
 (defun spiffy-useful-directory-files (directory)
   (filter
    (lambda (filename) (and (not (string= filename ".")) (not (string= filename ".."))))

@@ -59,24 +59,17 @@
    (lambda (filename) (and (not (string= filename ".")) (not (string= filename ".."))))
    (directory-files directory)))
 
-(defun spiffy-find-interesting-files (interesting-p directory)
-  (filter interesting-p (spiffy-find-all-files directory)))
-
-; all files, including directories (notably, empty directories)
-(defun spiffy-find-all-files (directory)
+(defun spiffy-find-interesting-files (directory interesting-p)
   (if (not (file-directory-p directory))
-      (list directory)  ; base case: it's just a file
-    (let ((files (list directory)))
+      (filter interesting-p (list directory))
+    (let ((files (filter interesting-p (list directory))))
       ; XXX there's a reduce function in cl-extra... use it instead of mapcar+setq
       (mapcar (lambda (subdir-files) (setq files (append files subdir-files)))
-              (mapcar 'spiffy-find-all-files
-                      (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
-                              (spiffy-useful-directory-files directory))))
-      files)))
-
-; just files
-(defun spiffy-find-files (directory)
-  (filter 'file-regular-p (spiffy-find-all-files directory)))
+              (mapcar (lambda (dir) (spiffy-find-interesting-files dir interesting-p))
+                      (filter interesting-p
+                              (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
+                                      (spiffy-useful-directory-files directory)))))
+    files)))
 
 (defun spiffy-is-project-root (directory)
   (file-exists-p (concat (file-name-as-directory directory) ".git")))
@@ -92,10 +85,13 @@
 
 (defun spiffy-project-files-for (file)
   (filter
-   (lambda (f) (and
-                (not (string-match ".git/" f))
-                (not (backup-file-name-p f))))
-   (spiffy-find-files (spiffy-project-root-for file))))
+   (lambda (path) (not (file-directory-p path)))
+   (spiffy-find-interesting-files
+    (spiffy-project-root-for file)
+    (lambda (f) (and
+                 (not (string-match ".git$" f))
+                 (not (string-match "gems$" f))
+                 (not (backup-file-name-p f)))))))
 
 ; XXX test me
 (defun spiffy-run-spec-under-point ()

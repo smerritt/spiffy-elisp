@@ -139,3 +139,20 @@
 (spiffy-make-shifty-arrow spiffy-arrow-down 'next-line)
 (spiffy-make-shifty-arrow spiffy-arrow-right 'forward-char)
 (spiffy-make-shifty-arrow spiffy-arrow-left 'backward-char)
+
+(defmacro spiffy-make-delimitizer (function-name left right)
+  `(defun ,function-name (&optional start end)
+     (interactive (if mark-active (list (region-beginning) (region-end))))
+     (if start
+         (progn
+           (goto-char start)
+           (insert ,left)
+           (goto-char (1+ end))
+           (insert ,right))
+       (insert ,left))))
+
+(spiffy-make-delimitizer spiffy-left-paren "(" ")")
+(spiffy-make-delimitizer spiffy-left-bracket "[" "]")
+(spiffy-make-delimitizer spiffy-left-curly "{" "}")
+(spiffy-make-delimitizer spiffy-single-quote "'" "'")
+(spiffy-make-delimitizer spiffy-double-quote "\"" "\"")

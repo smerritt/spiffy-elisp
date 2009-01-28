@@ -14,6 +14,12 @@
      (forward-char 2)
      ,@body))
 
+(defmacro with-small-gibberish-buffer (&rest body)
+  `(with-temp-buffer
+     (insert "abcdef")
+     (goto-char (point-min))
+     ,@body))
+
 (expectations
   ;; generic stuff
   (desc "spiffy-cwd")
@@ -125,10 +131,71 @@
     (with-gibberish-buffer
      (spiffy-arrow-down)
      (buffer-substring (region-beginning) (region-end))))
-    
+
   (expect "cdef\ngh"
     (with-gibberish-buffer
      (spiffy-arrow-up)
      (buffer-substring (region-beginning) (region-end))))
+
+  (desc "spiffy fancy delimiters")
+  (expect "a(bcd)ef"
+    (with-small-gibberish-buffer
+     (forward-char)
+     (push-mark nil t t)
+     (forward-char 3)
+     (spiffy-left-paren (region-beginning) (region-end))
+     (buffer-string)))
+
+  (expect "a(bcdef)"
+    (with-small-gibberish-buffer
+     (forward-char)
+     (push-mark nil t t)
+     (forward-char 5)
+     (spiffy-left-paren (region-beginning) (region-end))
+     (buffer-string)))
+
+  (expect "a(bcdef"
+    (with-small-gibberish-buffer
+     (forward-char)
+     (spiffy-left-paren)
+     (buffer-string)))
+
+  (expect "a[bcd]ef"
+    (with-small-gibberish-buffer
+     (forward-char)
+     (push-mark nil t t)
+     (forward-char 3)
+     (spiffy-left-bracket (region-beginning) (region-end))
+     (buffer-string)))
+
+  (expect "a[bcdef"
+    (with-small-gibberish-buffer
+     (forward-char)
+     (spiffy-left-bracket)
+     (buffer-string)))
+
+  (expect "a{bcd}ef"
+    (with-small-gibberish-buffer
+     (forward-char)
+     (push-mark nil t t)
+     (forward-char 3)
+     (spiffy-left-curly (region-beginning) (region-end))
+     (buffer-string)))
+
+  (expect "a'bcd'ef"
+    (with-small-gibberish-buffer
+     (forward-char)
+     (push-mark nil t t)
+     (forward-char 3)
+     (spiffy-single-quote (region-beginning) (region-end))
+     (buffer-string)))
+
+  (expect "a\"bcd\"ef"
+    (with-small-gibberish-buffer
+     (forward-char)
+     (push-mark nil t t)
+     (forward-char 3)
+     (spiffy-double-quote (region-beginning) (region-end))
+     (buffer-string)))
 )
 

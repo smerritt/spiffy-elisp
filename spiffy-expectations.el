@@ -4,6 +4,16 @@
 
 (setq tempdir (make-temp-file "spiffy-expectations" t))
 
+(defmacro with-gibberish-buffer (&rest body)
+  `(with-temp-buffer
+     (insert "abcdef\n")
+     (insert "ghijkl\n")
+     (insert "123456\n")
+     (goto-char (point-min))   ; get to the i
+     (forward-line 1)
+     (forward-char 2)
+     ,@body))
+
 (expectations
   ;; generic stuff
   (desc "spiffy-cwd")
@@ -41,21 +51,6 @@
     (spiffy-run-in-directory
      "/usr/bin"
      (spiffy-cwd)))
-
-  (desc "spiffy-find-files")
-  ; XXX test not portable due to hardcoded slashes, but I'm lazy
-  (expect (list
-           (concat tempdir "/bar")
-           (concat tempdir "/foo")
-           (concat tempdir "/subdir/bar"))
-    (progn
-      (append-to-file 5 10 (concat tempdir "/bar"))
-      (append-to-file 5 10 (concat tempdir "/foo"))
-      (make-directory (concat tempdir "/subdir"))
-      (append-to-file 5 10 (concat tempdir "/subdir/bar"))
-      (sort
-       (spiffy-find-files tempdir)
-       (lambda (a b) (string< a b)))))
 
   ;; textmate-mode things
   (desc "spiffy-project-files-for")
@@ -111,7 +106,29 @@
      (file-exists-p (lambda (file) (equal file "/my/project/bin/merb")))
      (spiffy-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
 
+  (desc "spiffy shift-arrows")
+  (expect "ijk"
+    (with-gibberish-buffer
+     (spiffy-arrow-right)
+     (spiffy-arrow-right)
+     (spiffy-arrow-right)
+     (buffer-substring (region-beginning) (region-end))))
+
+  (expect "\ngh"
+    (with-gibberish-buffer
+     (spiffy-arrow-left)
+     (spiffy-arrow-left)
+     (spiffy-arrow-left)
+     (buffer-substring (region-beginning) (region-end))))
+
+  (expect "ijkl\n12"
+    (with-gibberish-buffer
+     (spiffy-arrow-down)
+     (buffer-substring (region-beginning) (region-end))))
+    
+  (expect "cdef\ngh"
+    (with-gibberish-buffer
+     (spiffy-arrow-up)
+     (buffer-substring (region-beginning) (region-end))))
 )
-
-
 

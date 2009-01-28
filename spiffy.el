@@ -128,3 +128,14 @@
            (setq iswitchb-temp-buflist
                  (spiffy-project-files-for (buffer-file-name))))))
     (iswitchb-read-buffer "Open file: ")))
+
+(defmacro spiffy-make-shifty-arrow (outer-function motion-function)
+  `(defun ,outer-function ()
+     (interactive)
+     (unless mark-active
+       (push-mark nil t t))    ; silently push a mark and don't whine at the user about it
+     (funcall ,motion-function)))
+(spiffy-make-shifty-arrow spiffy-arrow-up 'previous-line)
+(spiffy-make-shifty-arrow spiffy-arrow-down 'next-line)
+(spiffy-make-shifty-arrow spiffy-arrow-right 'forward-char)
+(spiffy-make-shifty-arrow spiffy-arrow-left 'backward-char)

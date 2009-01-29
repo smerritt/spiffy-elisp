@@ -121,21 +121,21 @@
      (spiffy-tm-left-curly (region-beginning) (region-end))
      (buffer-string)))
 
-  (expect "a'bcd'ef"
-    (with-small-gibberish-buffer
-     (forward-char)
-     (push-mark nil t t)
-     (forward-char 3)
-     (spiffy-tm-left-single-quote (region-beginning) (region-end))
-     (buffer-string)))
+;;   (expect "a'bcd'ef"
+;;     (with-small-gibberish-buffer
+;;      (forward-char)
+;;      (push-mark nil t t)
+;;      (forward-char 3)
+;;      (spiffy-tm-left-single-quote (region-beginning) (region-end))
+;;      (buffer-string)))
 
-  (expect "a\"bcd\"ef"
-    (with-small-gibberish-buffer
-     (forward-char)
-     (push-mark nil t t)
-     (forward-char 3)
-     (spiffy-tm-left-double-quote (region-beginning) (region-end))
-     (buffer-string)))
+;;   (expect "a\"bcd\"ef"
+;;     (with-small-gibberish-buffer
+;;      (forward-char)
+;;      (push-mark nil t t)
+;;      (forward-char 3)
+;;      (spiffy-tm-left-double-quote (region-beginning) (region-end))
+;;      (buffer-string)))
 
   (desc "spiffy fancy right delimiters")
   (expect "abc)d)ef"
@@ -156,12 +156,12 @@
      (spiffy-tm-right-curly)
      (buffer-string)))
 
-  (expect "abc'd'ef"
-    (with-temp-buffer
-     (insert "abcd'ef")
-     (goto-char 4)   ; looking at d
-     (spiffy-tm-right-single-quote)
-     (forward-char)
-     (spiffy-tm-right-single-quote)
-     (buffer-string)))
+;;   (expect "abc'd'ef"
+;;     (with-temp-buffer
+;;      (insert "abcd'ef")
+;;      (goto-char 4)   ; looking at d
+;;      (spiffy-tm-right-single-quote)
+;;      (forward-char)
+;;      (spiffy-tm-right-single-quote)
+;;      (buffer-string)))
 )

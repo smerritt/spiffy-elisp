@@ -52,8 +52,8 @@
 (setq spiffy-tm-paired-characters '(
                                     (?\( ?\) "paren")
                                     (?\[ ?\] "bracket")
-                                    (?\{ ?\} "curly")
-                                    (?\" ?\" "double-quote")
-                                    (?\' ?\' "single-quote")))
+;;                                     (?\" ?\" "double-quote")
+;;                                     (?\' ?\' "single-quote")
+                                    (?\{ ?\} "curly")))
 
 (mapcar (lambda (spec) (spiffy-tm-make-delimitizers (car spec) (cadr spec) (caddr spec))) spiffy-tm-paired-characters)

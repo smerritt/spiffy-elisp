@@ -154,7 +154,7 @@
      (spiffy-tm-left-paren (region-beginning) (region-end))
      (buffer-string)))
 
-  (expect "a(bcdef"
+  (expect "a()bcdef"
     (with-small-gibberish-buffer
      (forward-char)
      (spiffy-tm-left-paren)
@@ -168,7 +168,7 @@
      (spiffy-tm-left-bracket (region-beginning) (region-end))
      (buffer-string)))
 
-  (expect "a[bcdef"
+  (expect "a[]bcdef"
     (with-small-gibberish-buffer
      (forward-char)
      (spiffy-tm-left-bracket)

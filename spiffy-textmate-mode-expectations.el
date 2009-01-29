@@ -48,26 +48,26 @@
   (desc "spiffy shift-arrows")
   (expect "ijk"
     (with-gibberish-buffer
-     (spiffy-arrow-right)
-     (spiffy-arrow-right)
-     (spiffy-arrow-right)
+     (spiffy-tm-arrow-right)
+     (spiffy-tm-arrow-right)
+     (spiffy-tm-arrow-right)
      (buffer-substring (region-beginning) (region-end))))
 
   (expect "\ngh"
     (with-gibberish-buffer
-     (spiffy-arrow-left)
-     (spiffy-arrow-left)
-     (spiffy-arrow-left)
+     (spiffy-tm-arrow-left)
+     (spiffy-tm-arrow-left)
+     (spiffy-tm-arrow-left)
      (buffer-substring (region-beginning) (region-end))))
 
   (expect "ijkl\n12"
     (with-gibberish-buffer
-     (spiffy-arrow-down)
+     (spiffy-tm-arrow-down)
      (buffer-substring (region-beginning) (region-end))))
 
   (expect "cdef\ngh"
     (with-gibberish-buffer
-     (spiffy-arrow-up)
+     (spiffy-tm-arrow-up)
      (buffer-substring (region-beginning) (region-end))))
 
   (desc "spiffy fancy left delimiters")

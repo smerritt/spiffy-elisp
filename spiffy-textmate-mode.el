@@ -32,7 +32,7 @@
   (filter
    (lambda (path) (not (file-directory-p path)))
    (spiffy-find-interesting-files
-    (spiffy-project-root-for file)
+    (spiffy-tm-project-root-for file)
     (lambda (f) (and
                  (not (string-match ".git$" f))
                  (not (string-match "gems$" f))

@@ -2,7 +2,7 @@
 (require 'spiffy-textmate-mode)
 (require 'fancy-pants-function-replacement)
 
-(setq tempdir (make-temp-file "spiffy-expectations" t))
+(setq tempdir (make-temp-file "spiffy-tm-expectations" t))
 
 (defmacro with-gibberish-buffer (&rest body)
   `(with-temp-buffer
@@ -21,7 +21,7 @@
      ,@body))
 
 (expectations
-  (desc "spiffy-project-files-for")
+  (desc "spiffy-tm-project-files-for")
   (expect (list
            (concat tempdir "/myproj/model/beer.rb")
            (concat tempdir "/myproj/spec/beer_spec.rb"))
@@ -35,15 +35,15 @@
       (append-to-file 5 10 (concat tempdir "/myproj/.git/HEAD"))  ; not in result
       (append-to-file 5 10 (concat tempdir "/myproj/model/beer.rb~"))  ; not in result
       (sort
-       (spiffy-project-files-for (concat tempdir "/myproj/model/beer.rb"))
+       (spiffy-tm-project-files-for (concat tempdir "/myproj/model/beer.rb"))
        (lambda (a b) (string< a b)))))
 
   ;; stuff concerning Git projects (could be extended to others)
-  (desc "spiffy-is-project-root")
+  (desc "spiffy-tm-is-project-root")
   (expect t
     (mocklet
         (((file-exists-p "/path/to/project/.git") => t))
-      (spiffy-is-project-root "/path/to/project/")))
+      (spiffy-tm-is-project-root "/path/to/project/")))
 
   (desc "spiffy shift-arrows")
   (expect "ijk"

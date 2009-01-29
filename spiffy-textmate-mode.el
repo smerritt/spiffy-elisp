@@ -1,31 +1,55 @@
+(require 'spiffy)
 (provide 'spiffy-textmate-mode)
 
 ; XXX test me bozo
-(defun spiffy-open-file-in-project ()
+(defun spiffy-tm-open-file-in-project ()
   (interactive)
-  (find-file (spiffy-pick-file-in-project)))
+  (find-file (spiffy-tm-pick-file-in-project)))
 
-(defun spiffy-pick-file-in-project ()
+(defun spiffy-tm-pick-file-in-project ()
   (let*
-      ((project-root (spiffy-project-root-for (buffer-file-name)))
+      ((project-root (spiffy-tm-project-root-for (buffer-file-name)))
        (iswitchb-make-buflist-hook
         (lambda ()
           (setq
            iswitchb-temp-buflist
            (mapcar (lambda (x) (substring x (length project-root)))
-                   (spiffy-project-files-for (buffer-file-name)))))))
+                   (spiffy-tm-project-files-for (buffer-file-name)))))))
     (concat project-root (iswitchb-read-buffer "Open file: "))))
 
-(defmacro spiffy-make-shifty-arrow (outer-function motion-function)
+(defun spiffy-tm-is-project-root (directory)
+  (file-exists-p (concat (file-name-as-directory directory) ".git")))
+
+(defun spiffy-tm-project-root-for (filename)
+  (let ((as-dir (file-name-as-directory filename)))
+    (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
+        nil    ; base case
+      (if (spiffy-tm-is-project-root as-dir)
+          as-dir
+        (spiffy-tm-project-root-for (spiffy-parent-directory filename))))))
+
+(defun spiffy-tm-project-files-for (file)
+  (filter
+   (lambda (path) (not (file-directory-p path)))
+   (spiffy-find-interesting-files
+    (spiffy-project-root-for file)
+    (lambda (f) (and
+                 (not (string-match ".git$" f))
+                 (not (string-match "gems$" f))
+                 (not (backup-file-name-p f)))))))
+
+
+;;;;;;;;;; Navigation + editing
+(defmacro spiffy-tm-make-shifty-arrow (outer-function motion-function)
   `(defun ,outer-function ()
      (interactive)
      (unless mark-active
        (push-mark nil t t))    ; silently push a mark and don't whine at the user about it
      (funcall ,motion-function)))
-(spiffy-make-shifty-arrow spiffy-arrow-up 'previous-line)
-(spiffy-make-shifty-arrow spiffy-arrow-down 'next-line)
-(spiffy-make-shifty-arrow spiffy-arrow-right 'forward-char)
-(spiffy-make-shifty-arrow spiffy-arrow-left 'backward-char)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-up 'previous-line)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-down 'next-line)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right 'forward-char)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left 'backward-char)
 
 (defmacro spiffy-tm-make-delimitizers (left-form right-form function-suffix-form)
   (let ((function-suffix (eval function-suffix-form))

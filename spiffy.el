@@ -71,27 +71,7 @@
                                       (spiffy-useful-directory-files directory)))))
     files)))
 
-(defun spiffy-is-project-root (directory)
-  (file-exists-p (concat (file-name-as-directory directory) ".git")))
-
 ; XXX refactor with spiffy-merb-root-dir-for
-(defun spiffy-project-root-for (filename)
-  (let ((as-dir (file-name-as-directory filename)))
-    (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
-        nil    ; base case
-      (if (spiffy-is-project-root as-dir)
-          as-dir
-        (spiffy-project-root-for (spiffy-parent-directory filename))))))
-
-(defun spiffy-project-files-for (file)
-  (filter
-   (lambda (path) (not (file-directory-p path)))
-   (spiffy-find-interesting-files
-    (spiffy-project-root-for file)
-    (lambda (f) (and
-                 (not (string-match ".git$" f))
-                 (not (string-match "gems$" f))
-                 (not (backup-file-name-p f)))))))
 
 ; XXX test me
 (defun spiffy-run-spec-under-point ()

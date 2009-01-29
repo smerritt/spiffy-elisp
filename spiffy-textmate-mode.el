@@ -71,7 +71,8 @@
          (interactive)
          (if (looking-at (char-to-string ,right))
              (forward-char)
-           (insert ,right))))))
+           ;; don't use insert here; it doesn't blink parens
+           (self-insert-command 1))))))
 
 (setq spiffy-tm-paired-characters '(
                                     (?\( ?\) "paren")

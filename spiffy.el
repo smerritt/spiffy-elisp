@@ -144,19 +144,31 @@
 (spiffy-make-shifty-arrow spiffy-arrow-right 'forward-char)
 (spiffy-make-shifty-arrow spiffy-arrow-left 'backward-char)
 
-(defmacro spiffy-make-delimitizer (function-name left right)
-  `(defun ,function-name (&optional start end)
-     (interactive (if mark-active (list (region-beginning) (region-end))))
-     (if start
-         (progn
-           (goto-char start)
-           (insert ,left)
-           (goto-char (1+ end))
-           (insert ,right))
-       (insert ,left))))
+(defmacro spiffy-tm-make-delimitizers (left-form right-form function-suffix-form)
+  (let ((function-suffix (eval function-suffix-form))
+        (left (eval left-form))
+        (right (eval right-form)))
+    `(progn
+       (defun ,(intern (concat "spiffy-tm-left-" function-suffix)) (&optional start end)
+         (interactive (if mark-active (list (region-beginning) (region-end))))
+         (if start
+             (progn
+               (goto-char start)
+               (insert ,left)
+               (goto-char (1+ end))
+               (insert ,right))
+           (insert ,left)))
+       (defun ,(intern (concat "spiffy-tm-right-" function-suffix)) ()
+         (interactive)
+         (if (looking-at (char-to-string ,right))
+             (forward-char)
+           (insert ,right))))))
 
-(spiffy-make-delimitizer spiffy-left-paren "(" ")")
-(spiffy-make-delimitizer spiffy-left-bracket "[" "]")
-(spiffy-make-delimitizer spiffy-left-curly "{" "}")
-(spiffy-make-delimitizer spiffy-single-quote "'" "'")
-(spiffy-make-delimitizer spiffy-double-quote "\"" "\"")
+(setq spiffy-tm-paired-characters '(
+                                    (?\( ?\) "paren")
+                                    (?\[ ?\] "bracket")
+                                    (?\{ ?\} "curly")
+                                    (?\" ?\" "double-quote")
+                                    (?\' ?\' "single-quote")))
+
+(mapcar (lambda (spec) (spiffy-tm-make-delimitizers (car spec) (cadr spec) (caddr spec))) spiffy-tm-paired-characters)

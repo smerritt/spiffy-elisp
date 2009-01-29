@@ -125,8 +125,9 @@
 (defun spiffy-pick-file-in-project ()
   (let ((iswitchb-make-buflist-hook
          (lambda ()
-           (setq iswitchb-temp-buflist
-                 (spiffy-project-files-for (buffer-file-name))))))
+           (setq
+            iswitchb-temp-buflist
+            (spiffy-project-files-for (buffer-file-name))))))
     (iswitchb-read-buffer "Open file: ")))
 
 (defmacro spiffy-make-shifty-arrow (outer-function motion-function)

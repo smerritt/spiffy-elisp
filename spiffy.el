@@ -123,12 +123,15 @@
   (find-file (spiffy-pick-file-in-project)))
 
 (defun spiffy-pick-file-in-project ()
-  (let ((iswitchb-make-buflist-hook
-         (lambda ()
-           (setq
-            iswitchb-temp-buflist
-            (spiffy-project-files-for (buffer-file-name))))))
-    (iswitchb-read-buffer "Open file: ")))
+  (let*
+      ((project-root (spiffy-project-root-for (buffer-file-name)))
+       (iswitchb-make-buflist-hook
+        (lambda ()
+          (setq
+           iswitchb-temp-buflist
+           (mapcar (lambda (x) (substring x (length project-root)))
+                   (spiffy-project-files-for (buffer-file-name)))))))
+    (concat project-root (iswitchb-read-buffer "Open file: "))))
 
 (defmacro spiffy-make-shifty-arrow (outer-function motion-function)
   `(defun ,outer-function ()

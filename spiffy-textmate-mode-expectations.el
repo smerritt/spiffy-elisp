@@ -93,6 +93,12 @@
      (spiffy-tm-left-paren)
      (buffer-string)))
 
+  (expect ?\)
+    (with-small-gibberish-buffer
+     (forward-char)
+     (spiffy-tm-left-paren)
+     (char-after)))
+
   (expect "a[bcd]ef"
     (with-small-gibberish-buffer
      (forward-char)

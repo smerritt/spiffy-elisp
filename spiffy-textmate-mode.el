@@ -40,7 +40,9 @@
                (insert ,left)
                (goto-char (1+ end))
                (insert ,right))
-           (insert ,left ,right)))
+           (progn
+             (insert ,left ,right)
+             (backward-char 1))))
        (defun ,(intern (concat "spiffy-tm-right-" function-suffix)) ()
          (interactive)
          (if (looking-at (char-to-string ,right))

@@ -1,6 +1,20 @@
 (require 'spiffy)
 (provide 'spiffy-textmate-mode)
 
+(defvar *spiffy-tm-keymap* (make-sparse-keymap) "Keybindings go in here")
+(defun spiffy-tm-define-key (key func)
+  (define-key *spiffy-tm-keymap* key func))
+
+; builtins that normally just live on different keys
+(spiffy-tm-define-key [(meta l)] 'goto-line)
+; stuff that's defined in here
+(spiffy-tm-define-key [(shift up)] 'spiffy-tm-arrow-up)
+(spiffy-tm-define-key [(shift down)] 'spiffy-tm-arrow-down)
+(spiffy-tm-define-key [(shift left)] 'spiffy-tm-arrow-left)
+(spiffy-tm-define-key [(shift right)] 'spiffy-tm-arrow-right)
+(spiffy-tm-define-key [(meta T)] 'spiffy-tm-open-file-in-project)
+(spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
+
 ; XXX test me bozo
 (defun spiffy-tm-open-file-in-project ()
   (interactive)
@@ -52,11 +66,13 @@
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left 'backward-char)
 
 (defmacro spiffy-tm-make-delimitizers (left-form right-form function-suffix-form)
-  (let ((function-suffix (eval function-suffix-form))
-        (left (eval left-form))
-        (right (eval right-form)))
+  (let* ((function-suffix (eval function-suffix-form))
+         (left (eval left-form))
+         (right (eval right-form))
+         (left-func-name (intern (concat "spiffy-tm-left-" function-suffix)))
+         (right-func-name (intern (concat "spiffy-tm-right-" function-suffix))))
     `(progn
-       (defun ,(intern (concat "spiffy-tm-left-" function-suffix)) (&optional start end)
+       (defun ,left-func-name (&optional start end)
          (interactive (if mark-active (list (region-beginning) (region-end))))
          (if start
              (progn
@@ -67,13 +83,15 @@
            (progn
              (insert ,left ,right)
              (backward-char 1))))
-       (defun ,(intern (concat "spiffy-tm-right-" function-suffix)) ()
+       (defun ,right-func-name ()
          (interactive)
          (if (looking-at (char-to-string ,right))
              (forward-char)
            (insert ,right))
          ; XXX test the calling of blink-paren-function
-         (if blink-paren-function (funcall blink-paren-function))))))
+         (if blink-paren-function (funcall blink-paren-function)))
+       (spiffy-tm-define-key [,left] ',left-func-name)
+       (spiffy-tm-define-key [,right] ',right-func-name))))
 
 (setq spiffy-tm-paired-characters '(
                                     (?\( ?\) "paren")
@@ -95,3 +113,11 @@
         (forward-char)
         (backward-delete-char-untabify 1)))
   (backward-delete-char-untabify 1))
+
+
+;;; Tie it all together
+(define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."
+  t
+  " SpiffyTM"
+  *spiffy-tm-keymap*)
+

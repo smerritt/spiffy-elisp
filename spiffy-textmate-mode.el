@@ -71,8 +71,9 @@
          (interactive)
          (if (looking-at (char-to-string ,right))
              (forward-char)
-           ;; don't use insert here; it doesn't blink parens
-           (self-insert-command 1))))))
+           (insert ,right))
+         ; XXX test the calling of blink-paren-function
+         (if blink-paren-function (funcall blink-paren-function))))))
 
 (setq spiffy-tm-paired-characters '(
                                     (?\( ?\) "paren")
@@ -80,5 +81,17 @@
 ;;                                     (?\" ?\" "double-quote")
 ;;                                     (?\' ?\' "single-quote")
                                     (?\{ ?\} "curly")))
+(setq spiffy-tm-close-delimiter
+      (mapcar (lambda (x) (cons (car x) (cadr x))) spiffy-tm-paired-characters))
 
 (mapcar (lambda (spec) (spiffy-tm-make-delimitizers (car spec) (cadr spec) (caddr spec))) spiffy-tm-paired-characters)
+
+(defun spiffy-tm-backspace ()
+  (interactive)
+  (if (and
+       (member (char-before) (mapcar 'car spiffy-tm-paired-characters))
+       (eq (cdr (assoc (char-before) spiffy-tm-close-delimiter)) (char-after)))
+      (progn
+        (forward-char)
+        (backward-delete-char-untabify 1)))
+  (backward-delete-char-untabify 1))

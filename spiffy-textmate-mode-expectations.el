@@ -139,4 +139,32 @@
      (forward-char)
      (spiffy-tm-right-curly)
      (buffer-string)))
+
+  (desc "delete a left-delimiter sometimes takes out the right delimiter")
+  (expect "abcd"
+    (with-temp-buffer
+      (insert "ab()cd")
+      (goto-char (point-min))
+      (forward-char 3)          ; between the parens
+      (spiffy-tm-backspace)
+      (buffer-string)))
+
+  ; and the others too
+  (expect "abcd"
+    (with-temp-buffer
+      (insert "ab[{}]cd")
+      (goto-char (point-min))
+      (forward-char 4)          ; between the balanced delimiters
+      (spiffy-tm-backspace)
+      (spiffy-tm-backspace)
+      (buffer-string)))
+
+  ; don't do it if the parens are not balanced
+  (expect "ab)cd"
+    (with-temp-buffer
+      (insert "ab{)cd")
+      (goto-char (point-min))
+      (forward-char 3)
+      (spiffy-tm-backspace)
+      (buffer-string)))
 )

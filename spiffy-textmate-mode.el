@@ -59,6 +59,7 @@
 ;;;;;;;;;; Navigation + editing
 (defmacro spiffy-tm-make-shifty-arrow (outer-function motion-function)
   `(defun ,outer-function ()
+     "Move point by one character. Before moving, set the mark if there's no active mark."
      (interactive)
      (unless mark-active
        (push-mark nil t t))    ; silently push a mark and don't whine at the user about it
@@ -108,6 +109,7 @@
 (mapcar (lambda (spec) (spiffy-tm-make-delimitizers (car spec) (cadr spec) (caddr spec))) spiffy-tm-paired-characters)
 
 (defun spiffy-tm-backspace ()
+  "Delete the character before point. If point is in the middle of (), [], or {}, delete both delimiters."
   (interactive)
   (if (and
        (member (char-before) (mapcar 'car spiffy-tm-paired-characters))
@@ -118,19 +120,21 @@
   (backward-delete-char-untabify 1))
 
 (defun spiffy-tm-select-word-under-point ()
-  (interactive)
   (while (looking-at "\\w+")
     (forward-char))
   (push-mark (point) nil t)
   (backward-word))
 
 (defun spiffy-tm-select-current-word-or-kill-region ()
- (interactive)
- (if mark-active
-     (kill-region (region-beginning) (region-end))
-   (spiffy-tm-select-word-under-point)))
+  "If there is no active mark, select the word under point (Textmate behavior).
+If the mark is active, kill the region (Emacs behavior)."
+  (interactive)
+  (if mark-active
+      (kill-region (region-beginning) (region-end))
+    (spiffy-tm-select-word-under-point)))
 
 (defun spiffy-tm-kill-entire-line ()
+  "Kill the entire current line."
   (interactive)
   (let*
       ((start (save-excursion

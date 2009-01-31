@@ -167,4 +167,20 @@
       (forward-char 3)
       (spiffy-tm-backspace)
       (buffer-string)))
+
+  (desc "select current word or kill region")
+  (expect "abc"      ; select current word
+    (with-temp-buffer
+      (insert "abc def ghi")
+      (goto-char 2)  ; b
+      (spiffy-tm-select-current-word-or-kill-region)
+      (buffer-substring (region-beginning) (region-end))))
+
+  (expect " def ghi"      ; kill-region
+    (with-temp-buffer
+      (insert "abc def ghi")
+      (goto-char 2)  ; b
+      (spiffy-tm-select-current-word-or-kill-region) ; select
+      (spiffy-tm-select-current-word-or-kill-region) ; kill
+      (buffer-string)))
 )

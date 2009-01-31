@@ -14,6 +14,7 @@
 (spiffy-tm-define-key [(shift right)] 'spiffy-tm-arrow-right)
 (spiffy-tm-define-key [(meta T)] 'spiffy-tm-open-file-in-project)
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
+(spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
 
 ; XXX test me bozo
 (defun spiffy-tm-open-file-in-project ()
@@ -114,6 +115,19 @@
         (backward-delete-char-untabify 1)))
   (backward-delete-char-untabify 1))
 
+(defun spiffy-tm-select-word-under-point ()
+  (interactive)
+  (while (looking-at "\\w+")
+    (forward-char))
+  (push-mark (point) nil t)
+  (backward-word))
+
+
+(defun spiffy-tm-select-current-word-or-kill-region ()
+ (interactive)
+ (if mark-active
+     (kill-region (region-beginning) (region-end))
+   (spiffy-tm-select-word-under-point)))
 
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."

@@ -119,15 +119,17 @@
 (mapcar (lambda (spec) (spiffy-tm-make-delimitizers (car spec) (cadr spec) (caddr spec))) spiffy-tm-paired-characters)
 
 (defun spiffy-tm-backspace ()
-  "Delete the character before point. If point is in the middle of (), [], or {}, delete both delimiters."
+  "Delete the region (if active), else delete balanced (), [], etc (if in the middle), else delete a character"
   (interactive)
-  (if (and
-       (member (char-before) (mapcar 'car spiffy-tm-paired-characters))
-       (eq (cdr (assoc (char-before) spiffy-tm-close-delimiter)) (char-after)))
-      (progn
-        (forward-char)
-        (backward-delete-char-untabify 1)))
-  (backward-delete-char-untabify 1))
+  (if mark-active
+      (kill-region (region-beginning) (region-end))
+    (if (and
+         (member (char-before) (mapcar 'car spiffy-tm-paired-characters))
+         (eq (cdr (assoc (char-before) spiffy-tm-close-delimiter)) (char-after)))
+        (progn
+          (forward-char)
+          (backward-delete-char-untabify 1)))
+    (backward-delete-char-untabify 1)))
 
 (defun spiffy-tm-select-word-under-point ()
   (while (looking-at "\\w+")

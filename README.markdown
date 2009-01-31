@@ -21,3 +21,4 @@ Functionality
 * Textmate-style parens: typing a left delimiter (that is, "(", "[", or "{") also inserts the right delimiter and leaves the point between them. Typing the right delimiter moves over the ), ], or } instead of inserting a new one. If the cursor is between an empty pair of balanced delimiters, typing backspace will eliminate both of them.
 * ctrl-w selects the current word if no text is selected (Textmate behavior). If some text is selected, then ctrl-w kills it (Emacs behavior).
 * ctrl-shift-k kills the entire line.
+* backspace kills any selected text, otherwise it just acts like normal backspace.

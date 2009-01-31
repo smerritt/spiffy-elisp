@@ -176,6 +176,18 @@
       (spiffy-tm-backspace)
       (buffer-string)))
 
+  (desc "delete the region if active")
+  (expect "ad"
+    (with-temp-buffer
+      (insert "abcd")
+      (goto-char (point-min))
+      (forward-char 1)
+      (push-mark nil t t)
+      (forward-char 2)
+      (spiffy-tm-backspace)
+      (buffer-string)))
+
+
   (desc "select current word or kill region")
   (expect "abc"      ; select current word
     (with-temp-buffer

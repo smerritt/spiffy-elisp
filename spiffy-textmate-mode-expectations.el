@@ -183,4 +183,9 @@
       (spiffy-tm-select-current-word-or-kill-region) ; select
       (spiffy-tm-select-current-word-or-kill-region) ; kill
       (buffer-string)))
+
+  (expect "abcdef\n123456\n"
+    (with-gibberish-buffer
+     (spiffy-tm-kill-entire-line)
+     (buffer-string)))
 )

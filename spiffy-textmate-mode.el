@@ -12,13 +12,14 @@
 (spiffy-tm-define-key [(shift down)] 'spiffy-tm-arrow-down)
 (spiffy-tm-define-key [(shift left)] 'spiffy-tm-arrow-left)
 (spiffy-tm-define-key [(shift right)] 'spiffy-tm-arrow-right)
-(spiffy-tm-define-key [(meta T)] 'spiffy-tm-open-file-in-project)
+(spiffy-tm-define-key [(meta t)] 'spiffy-tm-open-file-in-project)
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
 
 ; XXX test me bozo
 (defun spiffy-tm-open-file-in-project ()
+  "Choose a file in the current project. The project root is the directory with a .git directory in it."
   (interactive)
   (find-file (spiffy-tm-pick-file-in-project)))
 

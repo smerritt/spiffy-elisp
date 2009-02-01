@@ -17,6 +17,8 @@
 
 ; builtins that normally just live on different keys
 (spiffy-tm-define-key [(meta l)] 'goto-line)
+(spiffy-tm-define-key "\r" 'newline-and-indent)
+
 ; stuff that's defined in here
 (spiffy-tm-define-key [(shift up)] 'spiffy-tm-arrow-up)
 (spiffy-tm-define-key [(shift down)] 'spiffy-tm-arrow-down)
@@ -27,6 +29,7 @@
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
 (spiffy-tm-define-key [(meta /)] 'spiffy-tm-comment-dwim)
+(spiffy-tm-define-key [(meta return)] 'spiffy-tm-put-newline-at-eol)
 
 ; XXX test me bozo
 (defun spiffy-tm-open-file-in-project ()

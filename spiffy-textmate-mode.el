@@ -17,7 +17,7 @@
 
 ; builtins that normally just live on different keys
 (spiffy-tm-define-key [(meta l)] 'goto-line)
-(spiffy-tm-define-key "\r" 'newline-and-indent)
+;;(spiffy-tm-define-key "\r" 'newline-and-indent)
 
 ; stuff that's defined in here
 (spiffy-tm-define-key [(shift up)] 'spiffy-tm-arrow-up)

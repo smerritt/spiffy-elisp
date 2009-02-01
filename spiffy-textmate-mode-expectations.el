@@ -28,6 +28,18 @@
      (goto-char (point-min))
      ,@body))
 
+(defmacro with-ruby-buffer (&rest body)
+  `(with-temp-buffer
+     (ruby-mode)
+     (let ((comment-style 'plain))      ; so tests don't fail due to comment preferences
+       (insert "class Foo\n")
+       (insert "  def foo?\n")
+       (insert "    true\n")
+       (insert "  end\n")
+       (insert "end\n")
+       (goto-char (point-min))
+       ,@body)))
+
 (expectations
   (desc "spiffy-tm-project-files-for")
   (expect (list
@@ -208,4 +220,40 @@
     (with-gibberish-buffer
      (spiffy-tm-kill-entire-line)
      (buffer-string)))
+
+  (desc "commenting stuff out")
+  ; no region? comment the line you're on
+  (expect "# class Foo\n  def foo?\n    true\n  end\nend\n"
+    (with-ruby-buffer
+     (spiffy-tm-comment-dwim)
+     (buffer-string)))
+
+  ; no region and on a comment? uncomment line
+  (expect "class Foo\n  def foo?\n    true\n  end\nend\n"
+    (with-ruby-buffer
+     (insert "# ")
+     (spiffy-tm-comment-dwim)
+     (buffer-string)))
+
+  ; region selected? comment out the whole thing
+  (expect "# class Foo\n#   def foo?\n    true\n  end\nend\n"
+    (with-ruby-buffer
+     (push-mark nil t t)
+     (next-line 2)
+     (spiffy-tm-comment-dwim)
+     (buffer-string)))
+
+  ; region selected and all comments? uncomment the whole thing
+  (expect "class Foo\n  def foo?\n    true\n  end\nend\n"
+    (with-ruby-buffer
+     (insert "# ")
+     (next-line)
+     (move-beginning-of-line nil)
+     (insert "# ")
+     (goto-char (point-min))
+     (push-mark nil t t)
+     (next-line 2)
+     (spiffy-tm-comment-dwim)
+     (buffer-string)))
+
 )

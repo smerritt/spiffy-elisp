@@ -26,6 +26,7 @@
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
+(spiffy-tm-define-key [(meta /)] 'spiffy-tm-comment-dwim)
 
 ; XXX test me bozo
 (defun spiffy-tm-open-file-in-project ()
@@ -157,6 +158,18 @@ If the mark is active, kill the region (Emacs behavior)."
               (forward-char)
               (point))))
     (kill-region start end)))
+
+(defun spiffy-tm-comment-dwim ()
+  "Comment/uncomment either the current line or the region"
+  (interactive)
+  (if mark-active
+      (comment-dwim nil)
+    (save-excursion
+      (move-beginning-of-line nil)
+      (push-mark (point) t t)
+      (move-end-of-line nil)
+      (comment-dwim nil))))
+
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."
   t

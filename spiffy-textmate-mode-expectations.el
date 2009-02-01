@@ -256,4 +256,12 @@
      (spiffy-tm-comment-dwim)
      (buffer-string)))
 
+  (desc "meta-return")
+  (expect "abcd\nzyx"
+    (with-temp-buffer
+      (insert "abcd")
+      (backward-char 2)
+      (spiffy-tm-put-newline-at-eol)
+      (insert "zyx")
+      (buffer-string)))
 )

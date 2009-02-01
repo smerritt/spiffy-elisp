@@ -160,7 +160,7 @@ If the mark is active, kill the region (Emacs behavior)."
     (kill-region start end)))
 
 (defun spiffy-tm-comment-dwim ()
-  "Comment/uncomment either the current line or the region"
+  "Comment/uncomment either the current line or the region."
   (interactive)
   (if mark-active
       (comment-dwim nil)
@@ -169,6 +169,12 @@ If the mark is active, kill the region (Emacs behavior)."
       (push-mark (point) t t)
       (move-end-of-line nil)
       (comment-dwim nil))))
+
+(defun spiffy-tm-put-newline-at-eol ()
+  "Go to the end of the line and insert a newline."
+  (interactive)
+  (move-end-of-line nil)
+  (funcall (key-binding "\r")))
 
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."

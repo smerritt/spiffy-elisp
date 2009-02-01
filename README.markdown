@@ -22,3 +22,5 @@ Functionality
 * ctrl-w selects the current word if no text is selected (Textmate behavior). If some text is selected, then ctrl-w kills it (Emacs behavior).
 * ctrl-shift-k kills the entire line.
 * backspace kills any selected text, otherwise it just acts like normal backspace.
+* cmd-/ comments/uncomments the current line/region.
+* cmd-return skips over the rest of the line and inserts a newline.

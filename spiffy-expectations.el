@@ -79,9 +79,8 @@
 
   (desc "spiffy-merb-root-for")
   (expect "/my/project/"
-    (with-temporary-function-replacement
-     (file-exists-p (lambda (file) (equal file "/my/project/bin/merb")))
-     (spiffy-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
+    (flet ((file-exists-p (file) (equal file "/my/project/bin/merb")))
+      (spiffy-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
 
 )
 

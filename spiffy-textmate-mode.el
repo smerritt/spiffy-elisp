@@ -42,6 +42,7 @@
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
 (spiffy-tm-define-key [(meta /)] 'spiffy-tm-comment-dwim)
 (spiffy-tm-define-key [(meta return)] 'spiffy-tm-put-newline-at-eol)
+(spiffy-tm-define-key [(meta L)] 'spiffy-tm-select-line)    ; this function is f'in metal
 
 ; XXX test me bozo
 (defun spiffy-tm-open-file-in-project ()
@@ -159,6 +160,22 @@
   (push-mark (point) nil t)
   (backward-word))
 
+(defun spiffy-tm-select-line ()
+  (interactive)
+  (if mark-active
+      (progn
+        (if (< (point) (mark))
+            (exchange-point-and-mark))
+        (let ((start (point)))
+          (goto-char (mark))
+          (set-mark (point-at-bol))   ;; yes, the dreaded set-mark! damn your warnings!
+          (goto-char start))
+        (end-of-line)
+        (unless (eobp) (forward-char))
+    (progn
+      (push-mark (point-at-bol) t t)
+      (end-of-line))))
+
 (defun spiffy-tm-select-current-word-or-kill-region ()
   "If there is no active mark, select the word under point (Textmate behavior).
 If the mark is active, kill the region (Emacs behavior)."
@@ -202,4 +219,3 @@ If the mark is active, kill the region (Emacs behavior)."
   nil
   " SpiffyTM"
   *spiffy-tm-keymap*)
-

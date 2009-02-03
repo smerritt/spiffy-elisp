@@ -114,6 +114,43 @@
      (spiffy-tm-arrow-right-line)
      (buffer-substring (region-beginning) (region-end))))
 
+  (desc "select-line")
+  ;; select current line when mark is not active
+  (expect "def"
+    (with-temp-buffer
+      (insert "abc\ndef\nghi\njkl")
+      (goto-char (+ 5 (point-min)))
+      (spiffy-tm-select-line)
+      (buffer-substring (region-beginning) (region-end))))
+
+  ;; push region boundaries outward to have only whole lines selected
+  (expect "def\nghi\n"
+    (with-temp-buffer
+      (insert "abc\ndef\nghi\njkl")
+      (push-mark (+ 5 (point-min)) t t)  ; after d
+      (goto-char (+ 10 (point-min)))     ; after h
+      (spiffy-tm-select-line)
+      (buffer-substring (region-beginning) (region-end))))
+
+  ;; same as before, but with point before mark
+  (expect "def\nghi\n"
+    (with-temp-buffer
+      (insert "abc\ndef\nghi\njkl")
+      (push-mark (+ 5 (point-min)) t t)  ; after d
+      (goto-char (+ 10 (point-min)))     ; after h
+      (exchange-point-and-mark)
+      (spiffy-tm-select-line)
+      (buffer-substring (region-beginning) (region-end))))
+
+  ;; be okay at the end of the buffer
+  (expect "def\nghi"
+    (with-temp-buffer
+      (insert "abc\ndef\nghi")
+      (push-mark (+ 5 (point-min)) t t)  ; after d
+      (goto-char (+ 10 (point-min)))     ; after h
+      (spiffy-tm-select-line)
+      (buffer-substring (region-beginning) (region-end))))
+
   (desc "spiffy fancy left delimiters")
   (expect "a(bcd)ef"
     (with-small-gibberish-buffer

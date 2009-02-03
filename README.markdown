@@ -24,4 +24,10 @@ Functionality
 * backspace kills any selected text, otherwise it just acts like normal backspace.
 * cmd-/ (M-/) comments/uncomments the current line/region.
 * cmd-return (M-return) skips over the rest of the line and inserts a newline.
+
+Mac-isms
+========
 * cmd-s (M-s) saves the current buffer.
+* cmd-c (M-c) copies the selected text.
+* cmd-v (M-v) pastes (yanks, actually)
+* cmd-z (M-z) undoes.

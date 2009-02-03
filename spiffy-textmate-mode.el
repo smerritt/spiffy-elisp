@@ -18,6 +18,9 @@
 ; builtins that normally just live on different keys
 (spiffy-tm-define-key [(meta l)] 'goto-line)
 (spiffy-tm-define-key [(meta s)] 'save-buffer)
+(spiffy-tm-define-key [(meta c)] 'kill-ring-save)
+(spiffy-tm-define-key [(meta v)] 'yank)
+(spiffy-tm-define-key [(meta z)] 'undo)
 ;;(spiffy-tm-define-key "\r" 'newline-and-indent)
 
 ; stuff that's defined in here

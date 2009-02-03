@@ -8,7 +8,6 @@
 ;; GNU General Public License for more details.
 (require 'el-expectations)
 (require 'spiffy-textmate-mode)
-(require 'fancy-pants-function-replacement)
 
 (setq tempdir (make-temp-file "spiffy-tm-expectations" t))
 

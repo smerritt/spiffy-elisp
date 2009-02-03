@@ -127,9 +127,9 @@
 
 (mapcar (lambda (spec) (spiffy-tm-make-delimitizers (car spec) (cadr spec) (caddr spec))) spiffy-tm-paired-characters)
 
-(defun spiffy-tm-backspace ()
-  "Delete the region (if active), else delete balanced (), [], etc (if in the middle), else delete a character"
-  (interactive)
+(defun spiffy-tm-backspace (&optional arg)
+  "Delete the region (if active), else delete balanced (), [], etc (if in the middle), else delete a character."
+  (interactive "p")
   (if mark-active
       (kill-region (region-beginning) (region-end))
     (if (and
@@ -138,7 +138,9 @@
         (progn
           (forward-char)
           (backward-delete-char-untabify 1)))
-    (backward-delete-char-untabify 1)))
+    (backward-delete-char-untabify 1))
+  (if (and arg (< 1 arg))
+      (spiffy-tm-backspace (1- arg))))
 
 (defun spiffy-tm-select-word-under-point ()
   (while (looking-at "\\w+")

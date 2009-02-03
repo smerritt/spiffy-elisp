@@ -198,6 +198,15 @@
       (spiffy-tm-backspace)
       (buffer-string)))
 
+  ; pass along arguments
+  (expect "a"
+    (with-temp-buffer
+      (insert "abcd[()]")
+      (goto-char (point-max))
+      (backward-char 2)        ; between the parens
+      (spiffy-tm-backspace 5)
+      (buffer-string)))
+
   (desc "delete the region if active")
   (expect "ad"
     (with-temp-buffer

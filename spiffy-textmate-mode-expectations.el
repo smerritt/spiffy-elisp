@@ -100,6 +100,20 @@
      (spiffy-tm-arrow-left-word)
      (buffer-substring (region-beginning) (region-end))))
 
+  (expect "abc de"
+    (with-temp-buffer
+     (insert "abc def ghi\n123")
+     (goto-char (+ 6 (point-min)))
+     (spiffy-tm-arrow-left-line)
+     (buffer-substring (region-beginning) (region-end))))
+
+  (expect "f ghi"
+    (with-temp-buffer
+     (insert "abc def ghi\n123")
+     (goto-char (+ 6 (point-min)))
+     (spiffy-tm-arrow-right-line)
+     (buffer-substring (region-beginning) (region-end))))
+
   (desc "spiffy fancy left delimiters")
   (expect "a(bcd)ef"
     (with-small-gibberish-buffer

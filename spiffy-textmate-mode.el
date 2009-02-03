@@ -191,7 +191,7 @@ If the mark is active, kill the region (Emacs behavior)."
 
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."
-  t
+  nil
   " SpiffyTM"
   *spiffy-tm-keymap*)
 

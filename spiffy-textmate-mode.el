@@ -21,6 +21,10 @@
 (spiffy-tm-define-key [(meta c)] 'kill-ring-save)
 (spiffy-tm-define-key [(meta v)] 'yank)
 (spiffy-tm-define-key [(meta z)] 'undo)
+(spiffy-tm-define-key [(meta down)] (lambda () (interactive) (goto-char (point-max))))
+(spiffy-tm-define-key [(meta up)] (lambda () (interactive) (goto-char (point-min))))
+(spiffy-tm-define-key [(meta left)] (lambda () (interactive) (move-beginning-of-line nil)))
+(spiffy-tm-define-key [(meta right)] (lambda () (interactive) (move-end-of-line nil)))
 ;;(spiffy-tm-define-key "\r" 'newline-and-indent)
 
 ; stuff that's defined in here

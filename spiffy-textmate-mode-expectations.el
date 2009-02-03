@@ -89,6 +89,17 @@
      (spiffy-tm-arrow-up)
      (buffer-substring (region-beginning) (region-end))))
 
+  (desc "spiffy shift-arrows")
+  (expect "ijkl"
+    (with-gibberish-buffer
+     (spiffy-tm-arrow-right-word)
+     (buffer-substring (region-beginning) (region-end))))
+
+  (expect "gh"
+    (with-gibberish-buffer
+     (spiffy-tm-arrow-left-word)
+     (buffer-substring (region-beginning) (region-end))))
+
   (desc "spiffy fancy left delimiters")
   (expect "a(bcd)ef"
     (with-small-gibberish-buffer

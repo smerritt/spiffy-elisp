@@ -25,6 +25,8 @@
 (spiffy-tm-define-key [(shift down)] 'spiffy-tm-arrow-down)
 (spiffy-tm-define-key [(shift left)] 'spiffy-tm-arrow-left)
 (spiffy-tm-define-key [(shift right)] 'spiffy-tm-arrow-right)
+(spiffy-tm-define-key [(control shift left)] 'spiffy-tm-arrow-left-word)
+(spiffy-tm-define-key [(control shift right)] 'spiffy-tm-arrow-right-word)
 (spiffy-tm-define-key [(meta t)] 'spiffy-tm-open-file-in-project)
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
@@ -83,6 +85,8 @@
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-down 'next-line)
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right 'forward-char)
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left 'backward-char)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right-word 'forward-word)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left-word 'backward-word)
 
 (defmacro spiffy-tm-make-delimitizers (left-form right-form function-suffix-form)
   (let* ((function-suffix (eval function-suffix-form))

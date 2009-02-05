@@ -24,6 +24,7 @@ Functionality
 * backspace kills any selected text, otherwise it just acts like normal backspace.
 * cmd-/ (M-/) comments/uncomments the current line/region.
 * cmd-return (M-return) skips over the rest of the line and inserts a newline.
+* cmd-L (M-L): highlight the current line or move the region's boundaries outward to the nearest line boundaries.
 
 Mac-isms
 ========

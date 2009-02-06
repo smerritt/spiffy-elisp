@@ -171,7 +171,7 @@
           (set-mark (point-at-bol))   ;; yes, the dreaded set-mark! damn your warnings!
           (goto-char start))
         (end-of-line)
-        (unless (eobp) (forward-char))
+        (unless (eobp) (forward-char)))
     (progn
       (push-mark (point-at-bol) t t)
       (end-of-line))))

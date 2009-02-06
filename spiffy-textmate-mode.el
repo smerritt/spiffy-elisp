@@ -8,6 +8,7 @@
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
+(require 'ido)
 (require 'spiffy)
 (provide 'spiffy-textmate-mode)
 
@@ -25,7 +26,6 @@
 (spiffy-tm-define-key [(meta up)] (lambda () (interactive) (goto-char (point-min))))
 (spiffy-tm-define-key [(meta left)] (lambda () (interactive) (move-beginning-of-line nil)))
 (spiffy-tm-define-key [(meta right)] (lambda () (interactive) (move-end-of-line nil)))
-;;(spiffy-tm-define-key "\r" 'newline-and-indent)
 
 ; stuff that's defined in here
 (spiffy-tm-define-key [(shift up)] 'spiffy-tm-arrow-up)
@@ -52,14 +52,13 @@
 
 (defun spiffy-tm-pick-file-in-project ()
   (let*
-      ((project-root (spiffy-tm-project-root-for (buffer-file-name)))
-       (iswitchb-make-buflist-hook
-        (lambda ()
-          (setq
-           iswitchb-temp-buflist
-           (mapcar (lambda (x) (substring x (length project-root)))
-                   (spiffy-tm-project-files-for (buffer-file-name)))))))
-    (concat project-root (iswitchb-read-buffer "Open file: "))))
+      ((project-root (spiffy-tm-project-root-for (buffer-file-name))))
+    (concat
+     project-root
+     (ido-completing-read
+      "Open file: "
+      (mapcar (lambda (x) (substring x (length project-root)))
+              (spiffy-tm-project-files-for (buffer-file-name)))))))
 
 (defun spiffy-tm-is-project-root (directory)
   (file-exists-p (concat (file-name-as-directory directory) ".git")))

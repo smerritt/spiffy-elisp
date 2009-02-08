@@ -18,8 +18,10 @@
 (defun spiffy-tm-define-key (key func)
   (define-key *spiffy-tm-keymap* key func))
 
-; builtins that normally just live on different keys
+; builtins on different keys / one-liners
 (spiffy-tm-define-key [(meta l)] 'goto-line)
+(spiffy-tm-define-key [(meta delete)] (lambda () (interactive) (kill-line)))
+(spiffy-tm-define-key [(meta backspace)] (lambda () (interactive) (kill-line 0)))
 (spiffy-tm-define-key [(meta down)] 'end-of-buffer)
 (spiffy-tm-define-key [(meta up)] 'beginning-of-buffer)
 (spiffy-tm-define-key [(meta left)] (lambda () (interactive) (move-beginning-of-line nil)))

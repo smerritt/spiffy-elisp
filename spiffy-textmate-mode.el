@@ -134,8 +134,6 @@
 (setq spiffy-tm-paired-characters '(
                                     (?\( ?\) "paren")
                                     (?\[ ?\] "bracket")
-;;                                     (?\" ?\" "double-quote")
-;;                                     (?\' ?\' "single-quote")
                                     (?\{ ?\} "curly")))
 (setq spiffy-tm-close-delimiter
       (mapcar (lambda (x) (cons (car x) (cadr x))) spiffy-tm-paired-characters))

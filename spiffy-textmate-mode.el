@@ -27,11 +27,12 @@
 (spiffy-tm-define-key [(meta left)] (lambda () (interactive) (move-beginning-of-line nil)))
 (spiffy-tm-define-key [(meta right)] (lambda () (interactive) (move-end-of-line nil)))
 
-; stuff that's defined in here
+;; stuff that's defined in here
 (spiffy-tm-define-key [(shift up)] 'spiffy-tm-arrow-up)
 (spiffy-tm-define-key [(shift down)] 'spiffy-tm-arrow-down)
 (spiffy-tm-define-key [(shift left)] 'spiffy-tm-arrow-left)
 (spiffy-tm-define-key [(shift right)] 'spiffy-tm-arrow-right)
+; control shift up/down don't select text, and don't seem to do anything useful.
 (spiffy-tm-define-key [(control shift left)] 'spiffy-tm-arrow-left-word)
 (spiffy-tm-define-key [(control shift right)] 'spiffy-tm-arrow-right-word)
 (spiffy-tm-define-key [(meta shift up)] 'spiffy-tm-arrow-bob)
@@ -135,6 +136,8 @@
                                     (?\( ?\) "paren")
                                     (?\[ ?\] "bracket")
                                     (?\{ ?\} "curly")))
+
+; make an alist out of the balanced delimiters
 (setq spiffy-tm-close-delimiter
       (mapcar (lambda (x) (cons (car x) (cadr x))) spiffy-tm-paired-characters))
 

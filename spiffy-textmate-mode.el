@@ -34,6 +34,8 @@
 (spiffy-tm-define-key [(shift right)] 'spiffy-tm-arrow-right)
 (spiffy-tm-define-key [(control shift left)] 'spiffy-tm-arrow-left-word)
 (spiffy-tm-define-key [(control shift right)] 'spiffy-tm-arrow-right-word)
+(spiffy-tm-define-key [(meta shift up)] 'spiffy-tm-arrow-bob)
+(spiffy-tm-define-key [(meta shift down)] 'spiffy-tm-arrow-eob)
 (spiffy-tm-define-key [(meta shift left)] 'spiffy-tm-arrow-left-line)
 (spiffy-tm-define-key [(meta shift right)] 'spiffy-tm-arrow-right-line)
 (spiffy-tm-define-key [(meta t)] 'spiffy-tm-open-file-in-project)
@@ -98,6 +100,8 @@
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left-word 'backward-word)
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left-line (lambda () (move-beginning-of-line nil)))
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right-line (lambda () (move-end-of-line nil)))
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-bob (lambda () (goto-char (point-min))))
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-eob (lambda () (goto-char (point-max))))
 
 (defmacro spiffy-tm-make-delimitizers (left-form right-form function-suffix-form)
   (let* ((function-suffix (eval function-suffix-form))

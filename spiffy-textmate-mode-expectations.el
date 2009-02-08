@@ -64,7 +64,7 @@
         (((file-exists-p "/path/to/project/.git") => t))
       (spiffy-tm-is-project-root "/path/to/project/")))
 
-  (desc "spiffy shift-arrows")
+  (desc "arrows")
   (expect "ijk"
     (with-gibberish-buffer
      (spiffy-tm-arrow-right)
@@ -112,6 +112,16 @@
      (insert "abc def ghi\n123")
      (goto-char (+ 6 (point-min)))
      (spiffy-tm-arrow-right-line)
+     (buffer-substring (region-beginning) (region-end))))
+
+  (expect "abcdef\ngh"
+    (with-gibberish-buffer
+     (spiffy-tm-arrow-bob)
+     (buffer-substring (region-beginning) (region-end))))
+
+  (expect "ijkl\n123456\n"
+    (with-gibberish-buffer
+     (spiffy-tm-arrow-eob)
      (buffer-substring (region-beginning) (region-end))))
 
   (desc "select-line")

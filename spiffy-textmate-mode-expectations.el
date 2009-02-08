@@ -286,10 +286,18 @@
       (spiffy-tm-select-current-word-or-kill-region) ; kill
       (buffer-string)))
 
+  (desc "kill whole line")
   (expect "abcdef\n123456\n"
     (with-gibberish-buffer
      (spiffy-tm-kill-entire-line)
      (buffer-string)))
+
+  (expect ""
+    (with-temp-buffer
+      (insert "blah")     ; no newline
+      (spiffy-tm-kill-entire-line)
+      (buffer-string)))
+
 
   (desc "commenting stuff out")
   ; no region? comment the line you're on

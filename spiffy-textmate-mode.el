@@ -185,14 +185,11 @@ If the mark is active, kill the region (Emacs behavior)."
   "Kill the entire current line."
   (interactive)
   (let*
-      ((start (save-excursion
-                (move-beginning-of-line nil)
-                (point)))
-       (end (save-excursion
+      ((end (save-excursion
               (move-end-of-line nil)
-              (forward-char)
+              (unless (eobp) (forward-char))
               (point))))
-    (kill-region start end)))
+    (kill-region (point-at-bol) end)))
 
 (defun spiffy-tm-comment-dwim ()
   "Comment/uncomment either the current line or the region."

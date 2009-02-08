@@ -1,5 +1,7 @@
 ;; spiffy.el: a bunch of stuff I use in my Ruby+Merb coding.
 ;; Probably not useful to anyone but me, but hey, give it a try.
+;; Copyright 2009 Samuel Merritt <spam at andcheese dot org>
+;; Homepage: http://github.com/smerritt/spiffy-elisp/
 ;;
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

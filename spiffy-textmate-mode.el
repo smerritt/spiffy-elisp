@@ -1,4 +1,6 @@
 ;; spiffy-textmate-mode: yet another Textmate minor mode for Emacs.
+;; Copyright 2009 Samuel Merritt <spam at andcheese dot org>
+;; Homepage: http://github.com/smerritt/spiffy-elisp/
 ;;
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

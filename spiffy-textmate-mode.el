@@ -49,6 +49,7 @@
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
 (spiffy-tm-define-key [(meta /)] 'spiffy-tm-comment-dwim)
 (spiffy-tm-define-key [(meta return)] 'spiffy-tm-put-newline-at-eol)
+(spiffy-tm-define-key [(meta super return)] 'spiffy-tm-open-line-before)
 (spiffy-tm-define-key [(meta L)] 'spiffy-tm-select-line)    ; this function is f'in metal
 ; NB: the balanced delimiter keybindings get added to the keymap by
 ; spiffy-tm-make-delimitizers.
@@ -220,6 +221,12 @@ If the mark is active, kill the region (Emacs behavior)."
   (interactive)
   (move-end-of-line nil)
   (funcall (key-binding "\r")))
+
+(defun spiffy-tm-open-line-before ()
+  (interactive)
+  (move-beginning-of-line nil)
+  (open-line 1)
+  (indent-according-to-mode))
 
 ;; scoot
 (defun spiffy-tm-scoot (start end cant-move move)

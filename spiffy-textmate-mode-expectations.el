@@ -367,6 +367,21 @@
       (insert "zyx")
       (buffer-string)))
 
+  (desc "open line above current one and indent")
+  (expect "abc\n\ndef"
+    (with-temp-buffer
+      (insert "abc\ndef")
+      (goto-char (1- (point-max)))
+      (spiffy-tm-open-line-before)
+      (buffer-string)))
+
+  (expect "class Foo\n  def foo?\n    \n    true\n  end\nend\n"
+    (with-ruby-buffer
+     (goto-char (point-min))
+     (forward-line 2)     ; on 'true'
+     (spiffy-tm-open-line-before)
+     (buffer-string)))
+
   (desc "scoot right")
   (expect "abefXY"
     (with-short-scoot-test-buffer

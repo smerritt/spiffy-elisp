@@ -39,6 +39,10 @@
 (spiffy-tm-define-key [(meta shift down)] 'spiffy-tm-arrow-eob)
 (spiffy-tm-define-key [(meta shift left)] 'spiffy-tm-arrow-left-line)
 (spiffy-tm-define-key [(meta shift right)] 'spiffy-tm-arrow-right-line)
+(spiffy-tm-define-key [(control meta up)] 'spiffy-tm-scoot-up)
+(spiffy-tm-define-key [(control meta down)] 'spiffy-tm-scoot-down)
+(spiffy-tm-define-key [(control meta left)] 'spiffy-tm-scoot-left)
+(spiffy-tm-define-key [(control meta right)] 'spiffy-tm-scoot-right)
 (spiffy-tm-define-key [(meta t)] 'spiffy-tm-open-file-in-project)
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
@@ -214,6 +218,49 @@ If the mark is active, kill the region (Emacs behavior)."
   (interactive)
   (move-end-of-line nil)
   (funcall (key-binding "\r")))
+
+;; scoot
+(defun spiffy-tm-scoot (start end cant-move move)
+  (let ((text (buffer-substring start end))
+        (mark-was-active mark-active))
+    (delete-region start end)
+    (unless (funcall cant-move) (funcall move))
+    (let ((new-start (point)))
+      (insert text)
+      (if mark-was-active (set-mark (point)))
+      (goto-char new-start)))
+  (setq deactivate-mark nil))
+
+(defun spiffy-tm-scoot-right (start end)
+  (interactive "r")
+  (spiffy-tm-scoot start end 'eobp 'forward-char))
+
+(defun spiffy-tm-scoot-left (start end)
+  (interactive "r")
+  (spiffy-tm-scoot start end 'bobp 'backward-char))
+
+(defun spiffy-tm-scoot-up (&optional start end)
+  (interactive (if mark-active (list (region-beginning) (region-end))))
+  (spiffy-tm-scoot
+   (or start (point-at-bol))
+   (or end (if (= (point-at-eol) (point-max))
+               (point-at-eol)
+             (1+ (point-at-eol))))
+   (lambda () (= (line-number-at-pos (point)) (line-number-at-pos (point-min))))
+   (lambda () (forward-line -1))))
+
+(defun spiffy-tm-scoot-down (&optional start end)
+  (interactive (if mark-active (list (region-beginning) (region-end))))
+  (spiffy-tm-scoot
+   (or start (point-at-bol))
+   (or end (if (= (point-at-eol) (point-max))
+               (point-at-eol)
+             (1+ (point-at-eol))))
+   (lambda () nil)
+   (lambda ()
+     (if (= (line-number-at-pos (point)) (line-number-at-pos (point-max)))
+         (goto-char (point-max))
+       (forward-line)))))
 
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."

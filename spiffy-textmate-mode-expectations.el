@@ -39,6 +39,20 @@
        (goto-char (point-min))
        ,@body)))
 
+(defmacro with-short-scoot-test-buffer (&rest body)
+  `(with-temp-buffer
+    (insert "abXYef")
+    (goto-char (+ 2 (point-min))) ; region contains "XY"
+    (push-mark (+ 2 (point)) t t)
+    ,@body))
+
+(defmacro with-long-scoot-test-buffer (&rest body)
+  `(with-temp-buffer
+    (insert "*\n*\n*\nabXYdf\n*\n*\n*")
+    (goto-char (+ 6 (point-min))) ; region contains "abXYdf\n"
+    (push-mark (+ 7 (point)) t t)
+    ,@body))
+
 (expectations
   (desc "spiffy-tm-project-files-for")
   (expect (list
@@ -351,5 +365,119 @@
       (backward-char 2)
       (spiffy-tm-put-newline-at-eol)
       (insert "zyx")
+      (buffer-string)))
+
+  (desc "scoot right")
+  (expect "abefXY"
+    (with-short-scoot-test-buffer
+     (call-interactively 'spiffy-tm-scoot-right)
+     (call-interactively 'spiffy-tm-scoot-right)
+     (buffer-string)))
+
+  ; leave the same text in the region
+  (expect "XY"
+    (with-short-scoot-test-buffer
+     (call-interactively 'spiffy-tm-scoot-right)
+     (buffer-substring (region-beginning) (region-end))))
+
+  ; and leave the text highlighted
+  (expect nil
+    (with-short-scoot-test-buffer
+      (call-interactively 'spiffy-tm-scoot-right)
+      deactivate-mark))
+
+  ; don't error out at buffer's end
+  (expect "abefXY"
+    (with-short-scoot-test-buffer
+      ; XXX why doesn't dotimes work here? it seems to only call once.
+      (call-interactively 'spiffy-tm-scoot-right)
+      (call-interactively 'spiffy-tm-scoot-right)
+      (call-interactively 'spiffy-tm-scoot-right)
+      (buffer-string)))
+
+  (desc "scoot left")
+  (expect "XYabef"
+    (with-short-scoot-test-buffer
+      (call-interactively 'spiffy-tm-scoot-left)
+      (call-interactively 'spiffy-tm-scoot-left)
+      (buffer-string)))
+
+  (expect "XYabef"       ; watch for beginning of buffer
+    (with-short-scoot-test-buffer
+      (call-interactively 'spiffy-tm-scoot-left)
+      (call-interactively 'spiffy-tm-scoot-left)
+      (call-interactively 'spiffy-tm-scoot-left)
+      (buffer-string)))
+
+  (desc "scoot up")
+  (expect "*\nabXYdf\n*\n*\n*\n*\n*"
+    (with-long-scoot-test-buffer
+     (call-interactively 'spiffy-tm-scoot-up)
+     (call-interactively 'spiffy-tm-scoot-up)
+     (buffer-string)))
+
+  (expect "abXYdf\n*\n*\n*\n*\n*\n*"
+    (with-long-scoot-test-buffer
+     (call-interactively 'spiffy-tm-scoot-up)
+     (call-interactively 'spiffy-tm-scoot-up)
+     (call-interactively 'spiffy-tm-scoot-up)
+     (call-interactively 'spiffy-tm-scoot-up)
+     (buffer-string)))
+
+  ; no active region
+  (expect "*\nabXYdf\n*\n*\n*\n*\n*"
+    (with-long-scoot-test-buffer
+     (deactivate-mark)
+     (call-interactively 'spiffy-tm-scoot-up)
+     (call-interactively 'spiffy-tm-scoot-up)
+     (buffer-string)))
+
+  (expect "abc"     ; watch out for being on the last line in the buffer
+    (with-temp-buffer
+      (insert "abc")
+      (goto-char (point-min))
+      (call-interactively 'spiffy-tm-scoot-down)
+      (buffer-string)))
+
+  (desc "scoot down")
+  (expect "*\n*\n*\n*\n*\nabXYdf\n*"
+    (with-long-scoot-test-buffer
+     (call-interactively 'spiffy-tm-scoot-down)
+     (call-interactively 'spiffy-tm-scoot-down)
+     (buffer-string)))
+
+  (expect "*\n*\n*\n*\n*\n*abXYdf\n"     ; hit eob
+    (with-long-scoot-test-buffer
+     (call-interactively 'spiffy-tm-scoot-down)
+     (call-interactively 'spiffy-tm-scoot-down)
+     (call-interactively 'spiffy-tm-scoot-down)
+     (call-interactively 'spiffy-tm-scoot-down)
+     (buffer-string)))
+
+  ;; without an active region
+  (expect "*\n*\n*\n*\nabXYdf\n*\n*"
+    (with-long-scoot-test-buffer
+     (deactivate-mark)
+     (call-interactively 'spiffy-tm-scoot-down)
+     (buffer-string)))
+
+  (expect "*\n*\n*\n*\n*\nabXYdf\n*"
+    (with-long-scoot-test-buffer
+     (deactivate-mark)
+     (call-interactively 'spiffy-tm-scoot-down)
+     (call-interactively 'spiffy-tm-scoot-down)
+     (buffer-string)))
+
+  (expect nil
+    (with-long-scoot-test-buffer
+     (deactivate-mark)
+     (call-interactively 'spiffy-tm-scoot-down)
+     mark-active))
+
+  (expect "abc"     ; watch out for being on the last line in the buffer
+    (with-temp-buffer
+      (insert "abc")
+      (goto-char (point-min))
+      (call-interactively 'spiffy-tm-scoot-down)
       (buffer-string)))
 )

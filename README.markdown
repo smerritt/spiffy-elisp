@@ -12,11 +12,18 @@ To use it, put spiffy-textmate-mode.el somewhere that Emacs can find it and add
 `(spiffy-textmate-mode t)`
 to your ~/.emacs file.
 
+Also, you'll want to make sure that your command key is bound to the 'meta' modifier.
+
 Functionality
 =============
 * cmd-l (M-l): Go to line
 * shift+arrows: select text
   Unlike Textmate, typing plain arrows does not cause all the selected text to be unselected. Hit ctrl-g to unselect text.
+* More Textmate-style arrow navigation:
+  * ctrl-left/right to navigate by words (and ctrl-shift-left/right to select while doing so)
+  * cmd-left/right to go to beginning/end of line (and cmd-shift-left/right to select while doing so)
+  * ctrl-cmd-arrows to scoot selected text around
+  * ctrl-cmd-up/down move the current line up or down if nothing's selected
 * cmd-t (M-t): choose a file in the project (the project root is determined by the presence of a .git directory)
 * Textmate-style parens: typing a left delimiter (that is, "(", "[", or "{") also inserts the right delimiter and leaves the point between them. Typing the right delimiter moves over the ), ], or } instead of inserting a new one. If the cursor is between an empty pair of balanced delimiters, typing backspace will eliminate both of them.
 * ctrl-w selects the current word if no text is selected (Textmate behavior). If some text is selected, then ctrl-w kills it (Emacs behavior).

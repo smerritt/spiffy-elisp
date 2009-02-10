@@ -50,6 +50,8 @@
 (spiffy-tm-define-key [(meta /)] 'spiffy-tm-comment-dwim)
 (spiffy-tm-define-key [(meta return)] 'spiffy-tm-put-newline-at-eol)
 (spiffy-tm-define-key [(meta L)] 'spiffy-tm-select-line)    ; this function is f'in metal
+; NB: the balanced delimiter keybindings get added to the keymap by
+; spiffy-tm-make-delimitizers.
 
 ; XXX test me bozo
 (defun spiffy-tm-open-file-in-project ()
@@ -232,14 +234,17 @@ If the mark is active, kill the region (Emacs behavior)."
   (setq deactivate-mark nil))
 
 (defun spiffy-tm-scoot-right (start end)
+  "Move the region one character to the right."
   (interactive "r")
   (spiffy-tm-scoot start end 'eobp 'forward-char))
 
 (defun spiffy-tm-scoot-left (start end)
+  "Move the region one character to the left."
   (interactive "r")
   (spiffy-tm-scoot start end 'bobp 'backward-char))
 
 (defun spiffy-tm-scoot-up (&optional start end)
+  "Move the region or current line up one line."
   (interactive (if mark-active (list (region-beginning) (region-end))))
   (spiffy-tm-scoot
    (or start (point-at-bol))
@@ -250,6 +255,7 @@ If the mark is active, kill the region (Emacs behavior)."
    (lambda () (forward-line -1))))
 
 (defun spiffy-tm-scoot-down (&optional start end)
+  "Move the region or current line down one line."
   (interactive (if mark-active (list (region-beginning) (region-end))))
   (spiffy-tm-scoot
    (or start (point-at-bol))

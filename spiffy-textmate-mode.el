@@ -63,6 +63,8 @@
 (defun spiffy-tm-pick-file-in-project ()
   (let*
       ((project-root (spiffy-tm-project-root-for (buffer-file-name))))
+    (if (null project-root)
+        (error "Cannot find project root for buffer %s (associated with file %s)" (buffer-name) (buffer-file-name)))
     (concat
      project-root
      (ido-completing-read
@@ -74,12 +76,14 @@
   (file-exists-p (concat (file-name-as-directory directory) ".git")))
 
 (defun spiffy-tm-project-root-for (filename)
-  (let ((as-dir (file-name-as-directory filename)))
-    (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
-        nil    ; base case
-      (if (spiffy-tm-is-project-root as-dir)
-          as-dir
-        (spiffy-tm-project-root-for (spiffy-parent-directory filename))))))
+  (if (null filename)
+      nil
+    (let ((as-dir (file-name-as-directory filename)))
+      (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
+          nil    ; base case
+        (if (spiffy-tm-is-project-root as-dir)
+            as-dir
+          (spiffy-tm-project-root-for (spiffy-parent-directory filename)))))))
 
 (defun spiffy-tm-project-files-for (file)
   (filter

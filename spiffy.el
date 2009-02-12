@@ -110,3 +110,9 @@
      (spiffy-spec-binary-to-run-for (buffer-file-name))
      (buffer-file-name)))))
 
+(defun spiffy-start-or-finish-keyboard-macro ()
+  (interactive)
+  (if defining-kbd-macro
+      (kmacro-end-macro nil)
+    (kmacro-start-macro nil)))
+

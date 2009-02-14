@@ -495,4 +495,60 @@
       (goto-char (point-min))
       (call-interactively 'spiffy-tm-scoot-down)
       (buffer-string)))
+
+  (desc "indent when yanking")
+  (expect "class Foo\n  def foo?\n    true\n  end\nend\n"
+    (with-ruby-buffer
+     (forward-line)
+     (forward-char 2)
+     (kill-line)
+     (backward-delete-char-untabify 2)
+     (call-interactively 'spiffy-tm-yank-and-indent)
+     (buffer-string)))
+
+  (expect "class Foo\n  def baz?\n    true\n  end\nend\n"      ; now with a prefix arg
+    (with-ruby-buffer
+     (kill-new "def baz?")
+     (kill-new "def bar?")
+     (forward-line)
+     (forward-char 2)
+     (kill-line)
+     (backward-delete-char-untabify 2)
+     (spiffy-tm-yank-and-indent 3)
+     (buffer-string)))
+
+  (expect 'yank
+    (with-temp-buffer
+      (setq this-command 'stuff)
+      (kill-new "dontcare")
+      (call-interactively 'spiffy-tm-yank-and-indent)
+      this-command))
+
+  ; yank-pop works too
+  (expect "class Foo\n  def baz?\n    true\n  end\nend\n"      ; now with a prefix arg
+    (with-ruby-buffer
+     (setq last-command 'yank)
+     (kill-new "def baz?")
+     (kill-new "def bar?")
+     (forward-line)
+     (forward-char 2)
+     (kill-line)
+     (backward-delete-char-untabify 2)
+     (call-interactively 'spiffy-tm-yank-and-indent)
+     (call-interactively 'spiffy-tm-yank-pop-and-indent)
+     (call-interactively 'spiffy-tm-yank-pop-and-indent)
+     (buffer-string)))
+
+  (expect "class Foo\n  def baz?\n    true\n  end\nend\n" ; now with a prefix arg
+    (with-ruby-buffer
+     (setq last-command 'yank)
+     (kill-new "def baz?")
+     (kill-new "def bar?")
+     (forward-line)
+     (forward-char 2)
+     (kill-line)
+     (backward-delete-char-untabify 2)
+     (call-interactively 'spiffy-tm-yank-and-indent)
+     (spiffy-tm-yank-pop-and-indent 2)
+     (buffer-string)))
 )

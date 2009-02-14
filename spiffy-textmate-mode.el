@@ -48,6 +48,8 @@
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
+(spiffy-tm-define-key [(control y)] 'spiffy-tm-yank-and-indent)
+(spiffy-tm-define-key [(meta y)] 'spiffy-tm-yank-pop-and-indent)
 (spiffy-tm-define-key [(meta /)] 'spiffy-tm-comment-dwim)
 (spiffy-tm-define-key [(meta return)] 'spiffy-tm-put-newline-at-eol)
 (spiffy-tm-define-key [(meta super return)] 'spiffy-tm-open-line-before)
@@ -232,6 +234,24 @@ If the mark is active, kill the region (Emacs behavior)."
   (move-beginning-of-line nil)
   (open-line 1)
   (indent-according-to-mode))
+
+
+(defun spiffy-tm-yank-and-indent (arg)
+  "Reinsert and then indent the last stretch of killed text."
+  (interactive "p")
+  (spiffy-tm-yank-with 'yank arg))
+
+(defun spiffy-tm-yank-pop-and-indent (arg)
+  "Replace just-yanked stretch of killed text with a different stretch.
+After replacing, indent it."
+  (interactive "p")
+  (spiffy-tm-yank-with 'yank-pop arg))
+
+(defun spiffy-tm-yank-with (yanker arg)
+  (let ((mark-even-if-inactive t))
+    (funcall yanker arg)
+    (indent-region (region-beginning) (region-end)))
+  (setq this-command 'yank))
 
 ;; scoot
 (defun spiffy-tm-scoot (start end cant-move move)

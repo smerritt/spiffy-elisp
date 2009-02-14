@@ -39,4 +39,5 @@ Functionality
 * cmd-L (M-L): highlight the current line or move the region's boundaries outward to the nearest line boundaries.
 * cmd-option-return (M-s-return) opens and indents a new line above the current one.
 * cmd-option-] (M-s-]) aligns things in the region (e.g. assignment statements, key => value pairs).
-
+* ctrl-y yanks text and automatically indents it
+* cmd-y (M-y) goes back along the kill ring, indenting any inserted text.

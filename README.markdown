@@ -12,7 +12,12 @@ To use it, put spiffy-textmate-mode.el somewhere that Emacs can find it and add
 `(spiffy-textmate-mode t)`
 to your ~/.emacs file.
 
-Also, you'll want to make sure that your command key is bound to the 'meta' modifier.
+Also, you'll want to make sure that your command key is bound to the 'meta' modifier and your option key to the 'super' modifier.
+
+You can accomplish this in Carbon Emacs thusly:
+`(setq mac-pass-command-to-system nil)`
+`(setq mac-option-modifier 'super)`
+
 
 Functionality
 =============
@@ -33,10 +38,5 @@ Functionality
 * cmd-return (M-return) skips over the rest of the line and inserts a newline.
 * cmd-L (M-L): highlight the current line or move the region's boundaries outward to the nearest line boundaries.
 * cmd-option-return (M-s-return) opens and indents a new line above the current one.
+* cmd-option-] (M-s-]) aligns things in the region (e.g. assignment statements, key => value pairs).
 
-Mac-isms
-========
-* cmd-s (M-s) saves the current buffer.
-* cmd-c (M-c) copies the selected text.
-* cmd-v (M-v) pastes (yanks, actually)
-* cmd-z (M-z) undoes.

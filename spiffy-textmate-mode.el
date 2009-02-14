@@ -26,6 +26,7 @@
 (spiffy-tm-define-key [(meta up)] 'beginning-of-buffer)
 (spiffy-tm-define-key [(meta left)] (lambda () (interactive) (move-beginning-of-line nil)))
 (spiffy-tm-define-key [(meta right)] (lambda () (interactive) (move-end-of-line nil)))
+(spiffy-tm-define-key [(meta super ?\])] 'align)
 
 ;; stuff that's defined in here
 (spiffy-tm-define-key [(shift up)] 'spiffy-tm-arrow-up)

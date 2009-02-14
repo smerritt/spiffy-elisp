@@ -32,6 +32,7 @@ Functionality
 * cmd-/ (M-/) comments/uncomments the current line/region.
 * cmd-return (M-return) skips over the rest of the line and inserts a newline.
 * cmd-L (M-L): highlight the current line or move the region's boundaries outward to the nearest line boundaries.
+* cmd-option-return (M-s-return) opens and indents a new line above the current one.
 
 Mac-isms
 ========

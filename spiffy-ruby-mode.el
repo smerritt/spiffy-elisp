@@ -24,13 +24,14 @@
   (interactive)
   (spiffy-ruby-run-spec
    (buffer-file-name)
+   "-c"
    "-l"
    (format "%d" (line-number-at-pos)))) ; defaults to line number at point
 
                                         
 (defun spiffy-ruby-run-spec-file ()          ; XXX test it
   (interactive)
-  (spiffy-ruby-run-spec (buffer-file-name)))
+  (spiffy-ruby-run-spec (buffer-file-name) "-c"))
 
 (defun spiffy-ruby-run-spec (specfile &rest spec-args)
   (save-buffer)

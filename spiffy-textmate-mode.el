@@ -303,5 +303,5 @@ After replacing, indent it."
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."
   nil
-  " SpiffyTM"
+  " sTM"
   *spiffy-tm-keymap*)

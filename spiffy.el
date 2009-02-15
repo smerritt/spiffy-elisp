@@ -58,14 +58,12 @@
 (defun spiffy-find-interesting-files (directory interesting-p)
   (if (not (file-directory-p directory))
       (filter interesting-p (list directory))
-    (let ((files (filter interesting-p (list directory))))
-      ; XXX there's a reduce function in cl-extra... use it instead of mapcar+setq
-      (mapcar (lambda (subdir-files) (setq files (append files subdir-files)))
-              (mapcar (lambda (dir) (spiffy-find-interesting-files dir interesting-p))
-                      (filter interesting-p
-                              (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
-                                      (spiffy-useful-directory-files directory)))))
-    files)))
+    (append (filter interesting-p (list directory))
+            (reduce 'append
+                    (mapcar (lambda (dir) (spiffy-find-interesting-files dir interesting-p))
+                            (filter interesting-p
+                                    (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
+                                            (spiffy-useful-directory-files directory))))))))
 
 
 (defun spiffy-start-or-finish-keyboard-macro ()

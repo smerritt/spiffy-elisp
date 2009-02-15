@@ -11,7 +11,6 @@
 ;; GNU General Public License for more details.
 (require 'el-expectations)
 (require 'spiffy)
-(require 'fancy-pants-function-replacement)
 
 (setq tempdir (make-temp-file "spiffy-expectations" t))
 
@@ -52,35 +51,5 @@
     (spiffy-run-in-directory
      "/usr/bin"
      (spiffy-cwd)))
-
-
-  ;; merb-specific stuff
-  (desc "spiffy-is-merb-root")
-  (expect t
-    (mocklet
-        (((file-exists-p "/path/to/somewhere/bin/merb") => t))
-      (spiffy-is-merb-root "/path/to/somewhere/")))
-
-  (expect nil
-    (mocklet
-        (((file-exists-p "/path/to/somewhere/bin/merb") => nil))
-      (spiffy-is-merb-root "/path/to/somewhere/")))
-
-  (desc "spiffy-spec-binary-to-run-for")
-  (expect "/somewhere/bin/spec"
-    (mocklet
-        (((spiffy-merb-root-for "/somewhere/spec/foo.rb") => "/somewhere"))
-      (spiffy-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
-
-  (expect "spec"
-    (mocklet
-        (((spiffy-merb-root-for "/somewhere/spec/foo.rb") => nil))
-      (spiffy-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
-
-  (desc "spiffy-merb-root-for")
-  (expect "/my/project/"
-    (flet ((file-exists-p (file) (equal file "/my/project/bin/merb")))
-      (spiffy-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
-
 )
 

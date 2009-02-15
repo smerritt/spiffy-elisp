@@ -27,12 +27,6 @@
        (cd ,original-dir-var)
        ,retval-var)))
 
-(defun spiffy-spec-binary-to-run-for (filename)
-  (let ((merb-root (spiffy-merb-root-for filename)))
-    (if merb-root
-        (concat (file-name-as-directory merb-root) "bin/spec")
-      "spec")))    ; whatever the system's spec binary is
-
 (defun spiffy-make-shell-command (&rest parts)
   (mapconcat
    (lambda (str)
@@ -44,17 +38,6 @@
 
 (defun spiffy-parent-directory (filename)
   (file-name-as-directory (expand-file-name (concat(file-name-as-directory filename) ".."))))
-
-(defun spiffy-is-merb-root (dir)
-  (file-exists-p (concat (file-name-as-directory dir) "bin/merb")))
-
-(defun spiffy-merb-root-for (filename)
-  (let ((as-dir (file-name-as-directory filename)))
-    (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
-        nil    ; base case
-      (if (spiffy-is-merb-root as-dir)
-          as-dir
-        (spiffy-merb-root-for (spiffy-parent-directory filename))))))
 
 ; holy fucking crap
 ; it's 2009
@@ -84,30 +67,6 @@
                                       (spiffy-useful-directory-files directory)))))
     files)))
 
-; XXX refactor with spiffy-merb-root-dir-for
-
-; XXX test
-(defun spiffy-run-spec-under-point ()
-  (interactive)
-  (spiffy-run-spec
-   (buffer-file-name)
-   "-l"
-   (format "%d" (line-number-at-pos)))) ; defaults to line number at point
-
-; XXX test
-(defun spiffy-run-spec-file ()
-  (interactive)
-  (spiffy-run-spec (buffer-file-name)))
-
-(defun spiffy-run-spec (specfile &rest spec-args)
-  (save-buffer)
-  (spiffy-run-in-directory
-   (spiffy-merb-root-for specfile)
-   (compile
-    (apply 'spiffy-make-shell-command
-           (spiffy-spec-binary-to-run-for (buffer-file-name))
-           specfile
-           spec-args))))
 
 (defun spiffy-start-or-finish-keyboard-macro ()
   (interactive)

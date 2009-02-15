@@ -86,29 +86,28 @@
 
 ; XXX refactor with spiffy-merb-root-dir-for
 
-; XXX test me
+; XXX test
 (defun spiffy-run-spec-under-point ()
   (interactive)
-  (save-buffer)
-  (spiffy-run-in-directory
-   (spiffy-merb-root-for (buffer-file-name))
-   (compile
-    (spiffy-make-shell-command
-     (spiffy-spec-binary-to-run-for (buffer-file-name))
-     "-l"
-     (format "%d" (line-number-at-pos)) ; defaults to line number at point
-     (buffer-file-name)))))
+  (spiffy-run-spec
+   (buffer-file-name)
+   "-l"
+   (format "%d" (line-number-at-pos)))) ; defaults to line number at point
 
-; XXX test + refactor with spiffy-run-spec-under-point
+; XXX test
 (defun spiffy-run-spec-file ()
   (interactive)
+  (spiffy-run-spec (buffer-file-name)))
+
+(defun spiffy-run-spec (specfile &rest spec-args)
   (save-buffer)
   (spiffy-run-in-directory
-   (spiffy-merb-root-for (buffer-file-name))
+   (spiffy-merb-root-for specfile)
    (compile
-    (spiffy-make-shell-command
-     (spiffy-spec-binary-to-run-for (buffer-file-name))
-     (buffer-file-name)))))
+    (apply 'spiffy-make-shell-command
+           (spiffy-spec-binary-to-run-for (buffer-file-name))
+           specfile
+           spec-args))))
 
 (defun spiffy-start-or-finish-keyboard-macro ()
   (interactive)

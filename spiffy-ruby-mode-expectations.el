@@ -12,6 +12,17 @@
 (require 'el-expectations)
 (require 'spiffy-ruby-mode)
 
+(defmacro with-ruby-file-buffer (&rest body)
+  `(let ((tempfile (make-temp-file "spiffy-ruby-mode-expectations"))
+         retval)
+     (with-current-buffer (find-file-noselect tempfile)
+       (ruby-mode)
+       (spiffy-ruby-mode t)
+       (setq retval (progn ,@body))
+       (kill-buffer nil)   ; or else it hangs around as an open buffer
+       retval)))
+
+
 (expectations
   (desc "spiffy-ruby-is-merb-root")
   (expect t
@@ -39,4 +50,17 @@
   (expect "/my/project/"
     (flet ((file-exists-p (file) (equal file "/my/project/bin/merb")))
       (spiffy-ruby-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
+
+  (desc "syntax check")
+  (expect "*syntax check*"
+    (flet ((compile (x &optional y) (funcall compilation-buffer-name-function "ruby-mode")))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-syntax-check))))
+
+  (expect 0
+    (string-match
+     "ruby -c /"     ; we don't actually know the file name here
+     (flet ((compile (command &optional dontcare) command))
+       (with-ruby-file-buffer
+        (call-interactively 'spiffy-ruby-syntax-check)))))
 )

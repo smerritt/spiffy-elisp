@@ -19,6 +19,7 @@
 
 (spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(meta R)] 'spiffy-ruby-run-spec-under-point)
+(spiffy-ruby-define-key [(control ?\;) ?s ?c] 'spiffy-ruby-syntax-check)
 
 (defun spiffy-ruby-run-spec-under-point ()   ; XXX test it
   (interactive)
@@ -28,7 +29,6 @@
    "-l"
    (format "%d" (line-number-at-pos)))) ; defaults to line number at point
 
-                                        
 (defun spiffy-ruby-run-spec-file ()          ; XXX test it
   (interactive)
   (spiffy-ruby-run-spec (buffer-file-name) "-c"))
@@ -42,6 +42,12 @@
            (spiffy-ruby-spec-binary-to-run-for (buffer-file-name))
            specfile
            spec-args))))
+
+(defun spiffy-ruby-syntax-check ()
+  (interactive)
+  (let ((compilation-buffer-name-function (lambda (x) "*syntax check*")))
+    (compile
+     (spiffy-make-shell-command "ruby" "-c" (buffer-file-name)))))
 
 (defun spiffy-ruby-is-merb-root (dir)
   (file-exists-p (concat (file-name-as-directory dir) "bin/merb")))

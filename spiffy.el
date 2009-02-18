@@ -22,7 +22,7 @@
   (let ((retval-var (make-symbol "retval"))
         (original-dir-var (make-symbol "original-dir")))
     `(let ((,original-dir-var (spiffy-cwd)))
-       (cd ,dir)
+       (unless (null ,dir) (cd ,dir))
        (setq ,retval-var (funcall (lambda () ,@body)))
        (cd ,original-dir-var)
        ,retval-var)))

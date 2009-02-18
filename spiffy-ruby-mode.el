@@ -18,10 +18,13 @@
   (define-key *spiffy-ruby-keymap* key func))
 
 (spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
+(spiffy-ruby-define-key [(f5)] 'spiffy-ruby-run-spec-file)
+(spiffy-ruby-define-key [(meta f5)] 'spiffy-ruby-run-spec-under-point)
+(spiffy-ruby-define-key [(control f5)] 'spiffy-ruby-rerun-last-test)
 (spiffy-ruby-define-key [(meta R)] 'spiffy-ruby-run-spec-under-point)
 (spiffy-ruby-define-key [(control ?\;) ?s ?c] 'spiffy-ruby-syntax-check)
 
-(defun spiffy-ruby-run-spec-under-point ()   ; XXX test it
+(defun spiffy-ruby-run-spec-under-point ()
   (interactive)
   (spiffy-ruby-run-spec
    (buffer-file-name)
@@ -29,19 +32,32 @@
    "-l"
    (format "%d" (line-number-at-pos)))) ; defaults to line number at point
 
-(defun spiffy-ruby-run-spec-file ()          ; XXX test it
+(defun spiffy-ruby-run-spec-file ()
   (interactive)
   (spiffy-ruby-run-spec (buffer-file-name) "-c"))
 
 (defun spiffy-ruby-run-spec (specfile &rest spec-args)
   (save-buffer)
   (spiffy-run-in-directory
-   (spiffy-ruby-merb-root-for specfile)
+   (setq spiffy-ruby-last-test-dir (spiffy-ruby-merb-root-for specfile))
    (compile
-    (apply 'spiffy-make-shell-command
-           (spiffy-ruby-spec-binary-to-run-for (buffer-file-name))
-           specfile
-           spec-args))))
+    (setq
+     spiffy-ruby-last-test-command
+     (apply
+      'spiffy-make-shell-command
+      (cons
+       (spiffy-ruby-spec-binary-to-run-for (buffer-file-name))
+       (append spec-args (list specfile))))))))
+
+;; XXX make these rings so that we can have the last N tests run
+;;   (1 <= N <= 5, probably).
+;; should this show the spec that's being run, too?
+;;   spec puts the filename in failures...
+(defun spiffy-ruby-rerun-last-test ()
+  (interactive)
+  (spiffy-run-in-directory
+   spiffy-ruby-last-test-dir
+   (compile spiffy-ruby-last-test-command)))
 
 (defun spiffy-ruby-syntax-check ()
   (interactive)
@@ -71,5 +87,4 @@
   "Spiffy Ruby minor mode. Stuff that's useful when you're coding in Ruby."
   nil
   " sRB"
-  *spiffy-ruby-keymap*
-  )
+  *spiffy-ruby-keymap*)

@@ -22,7 +22,6 @@
        (kill-buffer nil)   ; or else it hangs around as an open buffer
        retval)))
 
-
 (expectations
   (desc "spiffy-ruby-is-merb-root")
   (expect t
@@ -50,6 +49,71 @@
   (expect "/my/project/"
     (flet ((file-exists-p (file) (equal file "/my/project/bin/merb")))
       (spiffy-ruby-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
+
+  (desc "run spec under point")
+  (expect "/tmp/"    ; runs in the merb root
+    (flet ((compile (x &optional y) (spiffy-cwd))
+           (spiffy-ruby-merb-root-for (x) "/tmp"))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-spec-under-point))))
+
+  (expect 0
+    (string-match
+     "spec -c -l 1 /"
+     (flet ((compile (x &optional y) x))
+       (with-ruby-file-buffer
+        (call-interactively 'spiffy-ruby-run-spec-under-point)))))
+
+  (expect 0
+    (string-match
+     "spec -c -l 1 /"
+     (flet ((compile (x &optional y) x))
+       (with-ruby-file-buffer
+        (call-interactively 'spiffy-ruby-run-spec-under-point)
+        spiffy-ruby-last-test-command))))
+
+  (expect "/usr/bin"
+    (flet ((compile (x &optional y) x)
+           (spiffy-ruby-merb-root-for (x) "/usr/bin"))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-spec-under-point)
+       spiffy-ruby-last-test-dir)))
+
+  (desc "run spec file")
+  (expect "/tmp/"                     ; runs in the merb root
+    (flet ((compile (x &optional y) (spiffy-cwd))
+           (spiffy-ruby-merb-root-for (x) "/tmp"))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-spec-file))))
+
+  (expect 0
+    (string-match
+     "spec -c /"
+     (flet ((compile (x &optional y) x))
+       (with-ruby-file-buffer
+        (call-interactively 'spiffy-ruby-run-spec-file)))))
+
+  (expect 0
+    (string-match
+     "spec -c /"
+     (flet ((compile (x &optional y) x))
+       (with-ruby-file-buffer
+        (call-interactively 'spiffy-ruby-run-spec-file)
+        spiffy-ruby-last-test-command))))
+
+  (expect "/usr/bin"
+    (flet ((compile (x &optional y) x)
+           (spiffy-ruby-merb-root-for (x) "/usr/bin"))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-spec-under-point)
+       spiffy-ruby-last-test-dir)))
+
+  (desc "re-run last test")
+  (expect "ack -thpppt"
+    (let ((spiffy-ruby-last-test-command "ack -thpppt"))
+      (flet ((compile (x &optional y) x))
+        (with-ruby-file-buffer
+         (call-interactively 'spiffy-ruby-rerun-last-test)))))
 
   (desc "syntax check")
   (expect "*syntax check*"

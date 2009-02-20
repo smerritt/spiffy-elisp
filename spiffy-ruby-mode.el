@@ -82,6 +82,33 @@
         (concat (file-name-as-directory merb-root) "bin/spec")
       "spec")))                 ; whatever the system's spec binary is
 
+(defun spiffy-ruby-corresponding-filename (filename)
+  (if (string-match "^spec" filename)
+      (spiffy-ruby-corresponding-code-filename filename)
+    (spiffy-ruby-corresponding-test-filename filename)))
+
+(defun spiffy-ruby-corresponding-code-filename (filename)
+  ;; the leaning tower of function calls... a code smell, methinks
+  (replace-regexp-in-string
+   "_spec.rb$" ".rb"
+   (replace-regexp-in-string
+    "^spec/" ""
+    (replace-regexp-in-string
+     "^spec/models/" "app/models/"
+     (replace-regexp-in-string
+      "spec/requests/" "app/controllers/"
+      filename)))))
+
+(defun spiffy-ruby-corresponding-test-filename (filename)
+  (concat
+   "spec/"
+   (replace-regexp-in-string
+    ".rb$" "_spec.rb"
+    (replace-regexp-in-string
+     "^app/" ""
+     (replace-regexp-in-string
+      "/controllers/" "/requests/"
+      filename)))))
 
 (define-minor-mode spiffy-ruby-mode
   "Spiffy Ruby minor mode. Stuff that's useful when you're coding in Ruby."

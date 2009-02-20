@@ -51,5 +51,17 @@
     (spiffy-run-in-directory
      "/usr/bin"
      (spiffy-cwd)))
-)
 
+  (desc "relative paths")
+  (expect "src/rand.c"    ; no trailing /
+    (spiffy-path-relative-to "/home/sam/prng" "/home/sam/prng/src/rand.c"))
+
+  (expect "src/rand.c"    ; trailing /
+    (spiffy-path-relative-to "/home/sam/prng/" "/home/sam/prng/src/rand.c"))
+
+  (expect "/home/sam/prng/src/rand.c"
+    (spiffy-path-relative-to "/usr/bin" "/home/sam/prng/src/rand.c"))
+
+  (expect "/home/sam/prng/src/rand.c"
+    (spiffy-path-relative-to nil "/home/sam/prng/src/rand.c"))
+)

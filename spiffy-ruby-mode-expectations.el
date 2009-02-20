@@ -127,4 +127,23 @@
      (flet ((compile (command &optional dontcare) command))
        (with-ruby-file-buffer
         (call-interactively 'spiffy-ruby-syntax-check)))))
+
+  (desc "switch between spec + implementation")
+  (expect "app/models/bottle.rb"
+    (spiffy-ruby-corresponding-filename "spec/models/bottle_spec.rb"))
+
+  (expect "spec/models/bottle_spec.rb"
+    (spiffy-ruby-corresponding-filename "app/models/bottle.rb"))
+
+  (expect "spec/requests/bottles_spec.rb"
+    (spiffy-ruby-corresponding-filename "app/controllers/bottles.rb"))
+
+  (expect "app/controllers/bottles.rb"
+    (spiffy-ruby-corresponding-filename "spec/requests/bottles_spec.rb"))
+
+  (expect "spec/lib/bottle_util_spec.rb"
+    (spiffy-ruby-corresponding-filename "lib/bottle_util.rb"))
+
+  (expect "lib/bottle_util.rb"
+    (spiffy-ruby-corresponding-filename "spec/lib/bottle_util_spec.rb"))
 )

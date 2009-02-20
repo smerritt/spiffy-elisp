@@ -65,10 +65,11 @@
                                     (mapcar (lambda (filename) (concat (file-name-as-directory directory) filename))
                                             (spiffy-useful-directory-files directory))))))))
 
+(defun spiffy-path-relative-to (basedir filename)
+  (replace-regexp-in-string (file-name-as-directory basedir) "" (or filename "")))
 
 (defun spiffy-start-or-finish-keyboard-macro ()
   (interactive)
   (if defining-kbd-macro
       (kmacro-end-macro nil)
     (kmacro-start-macro nil)))
-

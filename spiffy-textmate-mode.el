@@ -232,11 +232,13 @@ If the mark is active, kill the region (Emacs behavior)."
   (interactive)
   (if mark-active
       (comment-dwim nil)
-    (save-excursion
-      (move-beginning-of-line nil)
-      (push-mark (point) t t)
+    (progn
+      (save-excursion
+        (push-mark (point-at-bol) t t)
+        (move-end-of-line nil)
+        (comment-dwim nil))
       (move-end-of-line nil)
-      (comment-dwim nil))))
+      (unless (eobp) (forward-char)))))
 
 (defun spiffy-tm-put-newline-at-eol ()
   "Go to the end of the line and insert a newline."

@@ -337,6 +337,19 @@
      (spiffy-tm-comment-dwim)
      (buffer-string)))
 
+  ; no region? do stuff and move down a line
+  (expect "  def foo?"
+    (with-ruby-buffer
+     (spiffy-tm-comment-dwim)
+     (buffer-substring (point-at-bol) (point-at-eol))))
+
+  ; don't bump your head on the end of the buffer (passes by not erroring out)
+  (expect t
+    (with-ruby-buffer
+     (goto-char (point-max))
+     (spiffy-tm-comment-dwim)
+     t))
+
   ; region selected? comment out the whole thing
   (expect "# class Foo\n#   def foo?\n    true\n  end\nend\n"
     (with-ruby-buffer

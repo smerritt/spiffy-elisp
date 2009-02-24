@@ -63,6 +63,12 @@
   (interactive)
   (find-file (spiffy-tm-pick-file-in-project)))
 
+(defvar spiffy-tm-file-visited-times (make-hash-table :test 'equal)
+  "Records the last-visited-time of files. Internal use only.")
+(defadvice find-file-noselect (after spiffy-tm-record-file-visit-times activate)
+  (let ((filename (ad-get-arg 0)))
+    (puthash filename (time-to-seconds (current-time)) spiffy-tm-file-visited-times)))
+
 (defun spiffy-tm-pick-file-in-project ()
   (let*
       ((project-root (spiffy-tm-project-root-for (buffer-file-name))))
@@ -73,7 +79,16 @@
      (ido-completing-read
       "Open file: "
       (mapcar (lambda (x) (substring x (length project-root)))
-              (spiffy-tm-project-files-for (buffer-file-name)))))))
+              (sort (spiffy-tm-project-files-for (buffer-file-name))
+                    ; most-recently-visited first except that the current buffer shouldn't top the list
+                    (lambda (a b)
+                      (let ((aval (if (equal (buffer-file-name) a)
+                                      0
+                                    (gethash a spiffy-tm-file-visited-times 0)))
+                            (bval (if (equal (buffer-file-name) b)
+                                      0
+                                    (gethash b spiffy-tm-file-visited-times 0))))
+                        (> aval bval)))))))))
 
 (defun spiffy-tm-is-project-root (directory)
   (file-exists-p (concat (file-name-as-directory directory) ".git")))

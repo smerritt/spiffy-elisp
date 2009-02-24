@@ -20,7 +20,7 @@
 (spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(f5)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(meta f5)] 'spiffy-ruby-run-spec-under-point)
-(spiffy-ruby-define-key [(control f5)] 'spiffy-ruby-rerun-last-test)
+(spiffy-ruby-define-key [(super f10)] 'spiffy-ruby-rerun-last-test)
 (spiffy-ruby-define-key [(meta R)] 'spiffy-ruby-run-spec-under-point)
 (spiffy-ruby-define-key [(control ?\;) ?s ?c] 'spiffy-ruby-syntax-check)
 

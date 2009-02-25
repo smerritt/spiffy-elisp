@@ -45,6 +45,17 @@
         (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => nil))
       (spiffy-ruby-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
 
+  (desc "spiffy-ruby-rdebug-binary-to-run-for")
+  (expect "/somewhere/bin/rdebug"
+    (mocklet
+    (((spiffy-ruby-merb-root-for "/somewhere/rdebug/foo.rb") => "/somewhere"))
+    (spiffy-ruby-rdebug-binary-to-run-for "/somewhere/rdebug/foo.rb")))
+
+  (expect "rdebug"
+    (mocklet
+    (((spiffy-ruby-merb-root-for "/somewhere/rdebug/foo.rb") => nil))
+    (spiffy-ruby-rdebug-binary-to-run-for "/somewhere/rdebug/foo.rb")))
+
   (desc "spiffy-ruby-merb-root-for")
   (expect "/my/project/"
     (flet ((file-exists-p (file) (equal file "/my/project/bin/merb")))

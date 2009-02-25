@@ -77,10 +77,18 @@
         (spiffy-ruby-merb-root-for (spiffy-parent-directory filename))))))
 
 (defun spiffy-ruby-spec-binary-to-run-for (filename)
+  (spiffy-ruby-maybe-merbified-binary filename "spec" "bin"))
+
+(defun spiffy-ruby-rdebug-binary-to-run-for (filename)
+  (spiffy-ruby-maybe-merbified-binary filename "rdebug" "bin"))
+
+(defun spiffy-ruby-maybe-merbified-binary (filename program relative-path)
   (let ((merb-root (spiffy-ruby-merb-root-for filename)))
     (if merb-root
-        (concat (file-name-as-directory merb-root) "bin/spec")
-      "spec")))                 ; whatever the system's spec binary is
+        (reduce
+         (lambda (full partial) (concat (file-name-as-directory full) partial))
+         (list merb-root relative-path program))
+      program)))             ; whatever the system's one is (hope it has one)
 
 (defun spiffy-ruby-corresponding-filename (filename)
   (if (string-match "^spec" filename)

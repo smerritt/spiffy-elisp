@@ -45,6 +45,7 @@
 (spiffy-tm-define-key [(control meta left)] 'spiffy-tm-scoot-left)
 (spiffy-tm-define-key [(control meta right)] 'spiffy-tm-scoot-right)
 (spiffy-tm-define-key [(meta t)] 'spiffy-tm-open-file-in-project)
+(spiffy-tm-define-key [(control x) ?4 (meta t)] 'spiffy-tm-open-file-in-project-other-window)
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
@@ -62,6 +63,11 @@
   "Choose a file in the current project. The project root is the directory with a .git directory in it."
   (interactive)
   (find-file (spiffy-tm-pick-file-in-project)))
+
+(defun spiffy-tm-open-file-in-project-other-window ()
+  "Choose a file in the current project. The project root is the directory with a .git directory in it."
+  (interactive)
+  (find-file-other-window (spiffy-tm-pick-file-in-project)))
 
 (defvar spiffy-tm-file-visited-times (make-hash-table :test 'equal)
   "Records the last-visited-time of files. Internal use only.")

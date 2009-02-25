@@ -61,17 +61,20 @@
 
 ; XXX test me bozo
 (defun spiffy-tm-open-file-in-project ()
-  "Choose a file in the current project. The project root is the directory with a .git directory in it."
+  "Choose a file in the current project. Opens in the current window.
+The project root is the directory with a .git directory in it."
   (interactive)
   (find-file (spiffy-tm-pick-file-in-project)))
 
 (defun spiffy-tm-open-file-in-project-other-window ()
-  "Choose a file in the current project. The project root is the directory with a .git directory in it."
+  "Choose a file in the current project. Opens in the other window.
+The project root is the directory with a .git directory in it."
   (interactive)
   (find-file-other-window (spiffy-tm-pick-file-in-project)))
 
 (defun spiffy-tm-open-file-in-project-other-frame ()
-  "Choose a file in the current project. The project root is the directory with a .git directory in it."
+  "Choose a file in the current project. Opens in a new frame.
+The project root is the directory with a .git directory in it."
   (interactive)
   (find-file-other-frame (spiffy-tm-pick-file-in-project)))
 

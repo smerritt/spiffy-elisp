@@ -220,7 +220,7 @@ The project root is the directory with a .git directory in it."
           (set-mark (point-at-bol))   ;; yes, the dreaded set-mark! damn your warnings!
           (goto-char start))
         (end-of-line)
-        (unless (eobp) (forward-char)))
+        (spiffy-tm-safe-forward-char))
     (progn
       (push-mark (point-at-bol) t t)
       (end-of-line))))
@@ -239,7 +239,7 @@ If the mark is active, kill the region (Emacs behavior)."
   (let*
       ((end (save-excursion
               (move-end-of-line nil)
-              (unless (eobp) (forward-char))
+              (spiffy-tm-safe-forward-char)
               (point))))
     (kill-region (point-at-bol) end)))
 
@@ -254,7 +254,7 @@ If the mark is active, kill the region (Emacs behavior)."
         (move-end-of-line nil)
         (comment-dwim nil))
       (move-end-of-line nil)
-      (unless (eobp) (forward-char)))))
+      (spiffy-tm-safe-forward-char))))
 
 (defun spiffy-tm-put-newline-at-eol ()
   "Go to the end of the line and insert a newline."
@@ -332,6 +332,10 @@ After replacing, indent it."
      (if (= (line-number-at-pos (point)) (line-number-at-pos (point-max)))
          (goto-char (point-max))
        (forward-line)))))
+
+;;; Utility functions
+(defun spiffy-tm-safe-forward-char ()
+  (unless (eobp) (forward-char)))
 
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."

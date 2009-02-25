@@ -132,11 +132,12 @@ The project root is the directory with a .git directory in it."
 ;;;;;;;;;; Navigation + editing
 (defmacro spiffy-tm-make-shifty-arrow (outer-function motion-function)
   `(defun ,outer-function ()
-     "Move point by one character. Before moving, set the mark if there's no active mark."
+     "Move point as you'd expect. Before moving, set the mark if it's not active."
      (interactive)
      (unless mark-active
        (push-mark nil t t))    ; silently push a mark and don't whine at the user about it
      (funcall ,motion-function)))
+
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-up 'previous-line)
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-down 'next-line)
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right 'forward-char)

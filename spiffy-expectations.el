@@ -64,4 +64,21 @@
 
   (expect "/home/sam/prng/src/rand.c"
     (spiffy-path-relative-to nil "/home/sam/prng/src/rand.c"))
+
+  (desc "kill region or line")
+  (expect "ad\nefgh"
+    (with-temp-buffer
+      (insert "abcd\nefgh")
+      (push-mark (+ 1 (point-min)) t t)
+      (goto-char (+ 3 (point-min)))
+      (spiffy-kill-region-or-line)
+      (buffer-string)))
+
+  (expect "abc\nefgh"
+    (with-temp-buffer
+      (insert "abcd\nefgh")
+      (goto-char (+ 3 (point-min)))
+      (spiffy-kill-region-or-line)
+      (buffer-string)))
+
 )

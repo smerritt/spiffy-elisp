@@ -66,10 +66,21 @@
                                             (spiffy-useful-directory-files directory))))))))
 
 (defun spiffy-path-relative-to (basedir filename)
-  (replace-regexp-in-string (file-name-as-directory basedir) "" (or filename "")))
+  (replace-regexp-in-string
+   (if basedir
+       (file-name-as-directory basedir)
+     "")
+   ""
+   filename))
 
 (defun spiffy-start-or-finish-keyboard-macro ()
   (interactive)
   (if defining-kbd-macro
       (kmacro-end-macro nil)
     (kmacro-start-macro nil)))
+
+(defun spiffy-kill-region-or-line ()
+  (interactive)
+  (if mark-active
+      (kill-region (region-beginning) (region-end))
+    (kill-line)))

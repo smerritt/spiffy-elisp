@@ -126,6 +126,56 @@
         (with-ruby-file-buffer
          (call-interactively 'spiffy-ruby-rerun-last-test)))))
 
+  (desc "invoking rdebug")
+  (expect "/tmp/"                       ; runs in the merb root
+    (flet ((rdebug (&optional args) (spiffy-cwd))
+           (spiffy-ruby-merb-root-for (x) "/tmp")
+           ; flet + interactive don't play well together
+           (call-interactively (x) (funcall x)))
+      (with-ruby-file-buffer
+       ; no point w/call-interactively since it's nerfed
+       (spiffy-ruby-rdebug))))
+
+  (expect "/tmp/bin/rdebug --emacs 3"   ; uses the merb-relative rdebug
+    (let ((gud-rdebug-command-name "rdebug --emacs 3"))
+      (flet ((rdebug (&optional args) gud-rdebug-command-name)
+             (spiffy-ruby-merb-root-for (x) "/tmp")
+             (call-interactively (x) (funcall x)))
+        (with-ruby-file-buffer
+         (spiffy-ruby-rdebug)))))
+
+  (expect "original-rdebug"             ; don't screw with the original value
+    (let ((gud-rdebug-command-name "original-rdebug"))
+      (flet ((rdebug (&optional args) t)
+             (spiffy-ruby-merb-root-for (x) "/tmp")
+             (call-interactively (x) (funcall x)))
+        (with-ruby-file-buffer
+         (spiffy-ruby-rdebug))
+        gud-rdebug-command-name)))
+
+  (expect "original-rdebug"      ; in case of no merb root, don't alter the command
+    (let ((gud-rdebug-command-name "original-rdebug"))
+      (flet ((rdebug (&optional args) gud-rdebug-command-name)
+             (spiffy-ruby-merb-root-for (x) nil)
+             (call-interactively (x) (funcall x)))
+        (with-ruby-file-buffer
+         (spiffy-ruby-rdebug)))))
+
+  ;; tests for the horrible hack
+  ;; this is only because I cannot come up with a good way, short of really running rdebug
+  ;; and waiting to see if it worked and dealing with all those fun race conditiony things
+  ;; to test that this thing works.
+  ;;
+  ;; at least this way, I know that the hack is as I intend it to be, even if it's not
+  ;; actually fixing anything.
+  (expect '("/full/path/to/foo" "foo")
+    (flet ((rdebug () (list
+                       (file-name-nondirectory "/full/path/to/foo")
+                       (file-name-nondirectory "/full/path/to/foo")))
+           (call-interactively (x) (funcall x)))
+      (with-ruby-file-buffer
+       (spiffy-ruby-rdebug))))
+
   (desc "syntax check")
   (expect "*syntax check*"
     (flet ((compile (x &optional y) (funcall compilation-buffer-name-function "ruby-mode")))

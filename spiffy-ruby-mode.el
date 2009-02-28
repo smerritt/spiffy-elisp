@@ -17,9 +17,15 @@
 (defun spiffy-ruby-define-key (key func)
   (define-key *spiffy-ruby-keymap* key func))
 
+;; the theme behind these keybindings:
+;;  control-fN:       do something
+;;  control-shift-fN: do something similar
+;;  super-fN:         repeat the last control-fN action
+
 (spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
-(spiffy-ruby-define-key [(f10)] 'spiffy-ruby-run-spec-file)
-(spiffy-ruby-define-key [(meta f10)] 'spiffy-ruby-run-spec-under-point)
+(spiffy-ruby-define-key [(control f9)] 'spiffy-ruby-rdebug)
+(spiffy-ruby-define-key [(control f10)] 'spiffy-ruby-run-spec-file)
+(spiffy-ruby-define-key [(control shift f10)] 'spiffy-ruby-run-spec-under-point)
 (spiffy-ruby-define-key [(super f10)] 'spiffy-ruby-rerun-last-test)
 (spiffy-ruby-define-key [(meta R)] 'spiffy-ruby-run-spec-under-point)
 (spiffy-ruby-define-key [(control ?\;) ?s ?c] 'spiffy-ruby-syntax-check)
@@ -58,6 +64,33 @@
   (spiffy-run-in-directory
    spiffy-ruby-last-test-dir
    (compile spiffy-ruby-last-test-command)))
+
+(defun spiffy-ruby-rdebug ()
+  (interactive)
+  (let ((root (spiffy-ruby-merb-root-for (buffer-file-name))))
+    (spiffy-run-in-directory
+     root
+     (let ((gud-rdebug-command-name (if root
+                                        (concat
+                                         (file-name-as-directory root)
+                                         (file-name-as-directory "bin")
+                                         "rdebug --emacs 3")
+                                      gud-rdebug-command-name)))
+       ;; so, rdebug unconditionally strips the directory part off the script
+       ;; to debug. unfortunately, since we have to run from the merb root,
+       ;; stripping that name off makes this not work.
+       ;;
+       ;; the first call to file-name-nondirectory is the one that's used to
+       ;; screw that up, so for the first call, we act like the identity function,
+       ;; then restore the function so future uses don't screw up other logic
+       ;; inside rdebug.
+       ;;
+       ;; yes, this is a big fat ugly hack.
+       (let ((original-definition (symbol-function 'file-name-nondirectory)))
+         (flet ((file-name-nondirectory (name)
+                                      (ad-safe-fset 'file-name-nondirectory original-definition)
+                                      name))
+           (call-interactively 'rdebug)))))))
 
 (defun spiffy-ruby-syntax-check ()
   (interactive)

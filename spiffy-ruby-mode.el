@@ -22,11 +22,11 @@
 ;;  control-shift-fN: do something similar
 ;;  super-fN:         repeat the last control-fN action
 
-(spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(control f9)] 'spiffy-ruby-rdebug)
 (spiffy-ruby-define-key [(control f10)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(control shift f10)] 'spiffy-ruby-run-spec-under-point)
 (spiffy-ruby-define-key [(super f10)] 'spiffy-ruby-rerun-last-test)
+(spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(meta R)] 'spiffy-ruby-run-spec-under-point)
 (spiffy-ruby-define-key [(control ?\;) ?s ?c] 'spiffy-ruby-syntax-check)
 

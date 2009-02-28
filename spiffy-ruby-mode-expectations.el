@@ -153,14 +153,6 @@
          (spiffy-ruby-rdebug))
         gud-rdebug-command-name)))
 
-  (expect "original-rdebug"      ; in case of no merb root, don't alter the command
-    (let ((gud-rdebug-command-name "original-rdebug"))
-      (flet ((rdebug (&optional args) gud-rdebug-command-name)
-             (spiffy-ruby-merb-root-for (x) nil)
-             (call-interactively (x) (funcall x)))
-        (with-ruby-file-buffer
-         (spiffy-ruby-rdebug)))))
-
   ;; tests for the horrible hack
   ;; this is only because I cannot come up with a good way, short of really running rdebug
   ;; and waiting to see if it worked and dealing with all those fun race conditiony things

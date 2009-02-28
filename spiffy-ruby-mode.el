@@ -67,15 +67,11 @@
 
 (defun spiffy-ruby-rdebug ()
   (interactive)
-  (let ((root (spiffy-ruby-merb-root-for (buffer-file-name))))
+  (let ((root (spiffy-ruby-merb-root-for (buffer-file-name)))
+        (rdebug-binary (spiffy-ruby-rdebug-binary-to-run-for (buffer-file-name))))
     (spiffy-run-in-directory
      root
-     (let ((gud-rdebug-command-name (if root
-                                        (concat
-                                         (file-name-as-directory root)
-                                         (file-name-as-directory "bin")
-                                         "rdebug --emacs 3")
-                                      gud-rdebug-command-name)))
+     (let ((gud-rdebug-command-name (concat rdebug-binary " --emacs 3")))
        ;; so, rdebug unconditionally strips the directory part off the script
        ;; to debug. unfortunately, since we have to run from the merb root,
        ;; stripping that name off makes this not work.

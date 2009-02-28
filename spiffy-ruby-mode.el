@@ -25,6 +25,7 @@
 (spiffy-ruby-define-key [(control f9)] 'spiffy-ruby-rdebug)
 (spiffy-ruby-define-key [(control f10)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(control shift f10)] 'spiffy-ruby-run-spec-under-point)
+(spiffy-ruby-define-key [(shift f10)] 'spiffy-ruby-switch-code-and-test-buffer)
 (spiffy-ruby-define-key [(super f10)] 'spiffy-ruby-rerun-last-test)
 (spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(meta R)] 'spiffy-ruby-run-spec-under-point)
@@ -118,6 +119,19 @@
          (lambda (full partial) (concat (file-name-as-directory full) partial))
          (list merb-root relative-path program))
       program)))             ; whatever the system's one is (hope it has one)
+
+;; XXX test me
+(defun spiffy-ruby-switch-code-and-test-buffer ()
+  (interactive)
+  (let* ((merb-root (spiffy-ruby-merb-root-for (buffer-file-name)))
+         (other-file (concat
+                      (file-name-as-directory merb-root)
+                      (spiffy-ruby-corresponding-filename
+                       (spiffy-path-relative-to merb-root (buffer-file-name))))))
+    (if (and other-file (not (string= other-file (buffer-file-name))))
+        (if (file-exists-p other-file)
+            (find-file other-file)
+          (error "File %s does not exist" other-file)))))
 
 (defun spiffy-ruby-corresponding-filename (filename)
   (if (string-match "^spec" filename)

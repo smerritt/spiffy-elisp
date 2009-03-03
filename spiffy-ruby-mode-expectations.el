@@ -70,14 +70,14 @@
 
   (expect 0
     (string-match
-     "spec -c -l 1 /"
+     "spec -c -fs -l 1 /"
      (flet ((compile (x &optional y) x))
        (with-ruby-file-buffer
         (call-interactively 'spiffy-ruby-run-spec-under-point)))))
 
   (expect 0
     (string-match
-     "spec -c -l 1 /"
+     "spec -c -fs -l 1 /"
      (flet ((compile (x &optional y) x))
        (with-ruby-file-buffer
         (call-interactively 'spiffy-ruby-run-spec-under-point)
@@ -99,14 +99,14 @@
 
   (expect 0
     (string-match
-     "spec -c /"
+     "spec -c -fs /"
      (flet ((compile (x &optional y) x))
        (with-ruby-file-buffer
         (call-interactively 'spiffy-ruby-run-spec-file)))))
 
   (expect 0
     (string-match
-     "spec -c /"
+     "spec -c -fs /"
      (flet ((compile (x &optional y) x))
        (with-ruby-file-buffer
         (call-interactively 'spiffy-ruby-run-spec-file)

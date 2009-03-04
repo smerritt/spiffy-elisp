@@ -58,7 +58,7 @@
 (spiffy-tm-define-key [(meta return)] 'spiffy-tm-put-newline-at-eol)
 (spiffy-tm-define-key [(meta super return)] 'spiffy-tm-open-line-before)
 (spiffy-tm-define-key [(meta L)] 'spiffy-tm-select-line)    ; this function is f'in metal
-; NB: the balanced delimiter keybindings get added to the keymap by
+; NB: the balanced-delimiter keybindings get added to the keymap by
 ; spiffy-tm-make-delimitizers.
 
 ; XXX test me bozo
@@ -180,7 +180,6 @@ The project root is the directory with a .git directory in it."
          (if (looking-at (char-to-string ,right))
              (forward-char)
            (insert ,right))
-         ; XXX test the calling of blink-paren-function
          (if blink-paren-function (funcall blink-paren-function)))
        (spiffy-tm-define-key [,left] ',left-func-name)
        (spiffy-tm-define-key [,right] ',right-func-name))))

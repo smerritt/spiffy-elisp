@@ -218,7 +218,6 @@
 
   (expect ?\)
     (with-small-gibberish-buffer
-     (forward-char)
      (spiffy-tm-left-paren)
      (char-after)))
 
@@ -243,6 +242,22 @@
      (forward-char 3)
      (spiffy-tm-left-curly (region-beginning) (region-end))
      (buffer-string)))
+
+  ; paren blinking
+  (expect "called"
+    (let* ((blink "not called"))
+      (with-temp-buffer
+        (let ((blink-paren-function
+               (lambda () (message "foo") (setq blink "called"))))
+          (spiffy-tm-left-paren)
+          (funcall blink-paren-function)
+          blink))))
+
+  (expect t                             ; passes by not crashing
+    (with-temp-buffer
+      (let ((blink-paren-function nil))
+          (spiffy-tm-left-paren)
+          t)))
 
   (desc "spiffy fancy right delimiters")
   (expect "abc)d)ef"

@@ -28,13 +28,7 @@
        ,retval-var)))
 
 (defun spiffy-make-shell-command (&rest parts)
-  (mapconcat
-   (lambda (str)
-     (if (string-match "[\t ]" str)
-         (concat "\"" str "\"")
-       str))
-   parts
-   " "))
+  (mapconcat 'shell-quote-argument parts " "))
 
 (defun spiffy-parent-directory (filename)
   (file-name-as-directory (expand-file-name (concat(file-name-as-directory filename) ".."))))

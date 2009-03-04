@@ -31,7 +31,7 @@
   (expect "bin/spec -c -l 30 spec/models/foo.spec"
     (spiffy-make-shell-command "bin/spec" "-c" "-l" "30" "spec/models/foo.spec"))
 
-  (expect "cat \"file with spaces\""
+  (expect "cat file\\ with\\ spaces"
     (spiffy-make-shell-command "cat" "file with spaces"))
 
   (desc "spiffy-parent-directory")

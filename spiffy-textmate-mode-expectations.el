@@ -78,6 +78,24 @@
         (((file-exists-p "/path/to/project/.git") => t))
       (spiffy-tm-is-project-root "/path/to/project/")))
 
+  (desc "find in project")
+  (expect "/usr/tmp/"    ; find in the project root
+    (mocklet
+        (((grep-compute-defaults) => t))     ; will cause error if not called, just like the real one
+      (flet ((rgrep (regex &optional pattern path) path)
+             (spiffy-tm-project-root-for (x) "/usr/tmp/"))
+        (spiffy-tm-grep-project "defun"))))
+
+  (expect "*"                           ; search in all files
+    (flet ((rgrep (regex &optional pattern path) pattern)
+           (spiffy-tm-project-root-for (x) "/usr/tmp/"))
+      (spiffy-tm-grep-project "defun")))
+
+  (expect "defun"                       ; search for the specified pattern
+    (flet ((rgrep (regex &optional pattern path) regex)
+           (spiffy-tm-project-root-for (x) "/usr/tmp/"))
+      (spiffy-tm-grep-project "defun")))
+
   (desc "arrows")
   (expect "ijk"
     (with-gibberish-buffer

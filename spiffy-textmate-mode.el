@@ -10,6 +10,7 @@
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
+(require 'grep)
 (require 'ido)
 (require 'spiffy)
 (provide 'spiffy-textmate-mode)
@@ -44,6 +45,7 @@
 (spiffy-tm-define-key [(control meta down)] 'spiffy-tm-scoot-down)
 (spiffy-tm-define-key [(control meta left)] 'spiffy-tm-scoot-left)
 (spiffy-tm-define-key [(control meta right)] 'spiffy-tm-scoot-right)
+(spiffy-tm-define-key [(meta F)] 'spiffy-tm-grep-project)
 (spiffy-tm-define-key [(meta t)] 'spiffy-tm-open-file-in-project)
 (spiffy-tm-define-key [(control x) ?4 (meta t)] 'spiffy-tm-open-file-in-project-other-window)
 (spiffy-tm-define-key [(control x) ?5 (meta t)] 'spiffy-tm-open-file-in-project-other-frame)
@@ -104,6 +106,12 @@ The project root is the directory with a .git directory in it."
                                       0
                                     (gethash b spiffy-tm-file-visited-times 0))))
                         (> aval bval)))))))))
+
+(defun spiffy-tm-grep-project (regexp)
+  (interactive
+   (list (grep-read-regexp)))
+  (grep-compute-defaults)      ; rgrep only does this when called interactively
+  (rgrep regexp "*" (spiffy-tm-project-root-for (buffer-file-name))))
 
 (defun spiffy-tm-is-project-root (directory)
   (file-exists-p (concat (file-name-as-directory directory) ".git")))

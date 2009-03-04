@@ -46,7 +46,9 @@
 
 (defun spiffy-useful-directory-files (directory)
   (filter
-   (lambda (filename) (and (not (string= filename ".")) (not (string= filename ".."))))
+   (lambda (filename) (and
+                       (not (string= filename "."))
+                       (not (string= filename ".."))))
    (directory-files directory)))
 
 (defun spiffy-find-interesting-files (directory interesting-p)

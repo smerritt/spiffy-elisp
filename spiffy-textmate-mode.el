@@ -37,6 +37,10 @@
 ; control shift up/down don't select text, and don't seem to do anything useful.
 (spiffy-tm-define-key [(control shift left)] 'spiffy-tm-arrow-left-word)
 (spiffy-tm-define-key [(control shift right)] 'spiffy-tm-arrow-right-word)
+(spiffy-tm-define-key [(super left)] 'spiffy-tm-backward-liberal-word)
+(spiffy-tm-define-key [(super right)] 'spiffy-tm-forward-liberal-word)
+(spiffy-tm-define-key [(super shift left)] 'spiffy-tm-arrow-backward-liberal-word)
+(spiffy-tm-define-key [(super shift right)] 'spiffy-tm-arrow-forward-liberal-word)
 (spiffy-tm-define-key [(meta shift up)] 'spiffy-tm-arrow-bob)
 (spiffy-tm-define-key [(meta shift down)] 'spiffy-tm-arrow-eob)
 (spiffy-tm-define-key [(meta shift left)] 'spiffy-tm-arrow-left-line)
@@ -152,6 +156,8 @@ The project root is the directory with a .git directory in it."
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left 'backward-char)
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right-word 'forward-word)
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left-word 'backward-word)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right-liberal-word 'spiffy-tm-forward-liberal-word)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left-liberal-word 'spiffy-tm-backward-liberal-word)
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-left-line (lambda () (move-beginning-of-line nil)))
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right-line (lambda () (move-end-of-line nil)))
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-bob (lambda () (goto-char (point-min))))
@@ -209,6 +215,20 @@ The project root is the directory with a .git directory in it."
     (backward-delete-char-untabify 1))
   (if (and arg (< 1 arg))
       (spiffy-tm-backspace (1- arg))))
+
+(defvar spiffy-tm-liberal-word-syntax-table (make-syntax-table)
+  "Syntax table with _ as a word constituent")
+(modify-syntax-entry ?_ "w" spiffy-tm-liberal-word-syntax-table)
+
+(defun spiffy-tm-forward-liberal-word (&optional arg)
+  (interactive "p")
+  (with-syntax-table spiffy-tm-liberal-word-syntax-table
+    (forward-word arg)))
+
+(defun spiffy-tm-backward-liberal-word (&optional arg)
+  (interactive "p")
+  (with-syntax-table spiffy-tm-liberal-word-syntax-table
+    (backward-word arg)))
 
 (defun spiffy-tm-select-word-under-point ()
   (while (looking-at "\\w+")

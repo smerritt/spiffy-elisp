@@ -121,6 +121,29 @@
      (spiffy-tm-arrow-up)
      (buffer-substring (region-beginning) (region-end))))
 
+  (expect " e_f"
+    (with-temp-buffer
+      (insert "a_b c_d e_f")
+      (goto-char (point-min))
+      (spiffy-tm-forward-liberal-word)
+      (spiffy-tm-forward-liberal-word)
+      (buffer-substring (point) (point-max))))
+
+  (expect " e_f"
+    (with-temp-buffer
+      (insert "a_b c_d e_f")
+      (goto-char (point-min))
+      (spiffy-tm-forward-liberal-word 2)
+      (buffer-substring (point) (point-max))))
+
+  (expect "a_b "
+    (with-temp-buffer
+      (insert "a_b c_d e_f")
+      (goto-char (point-max))
+      (spiffy-tm-backward-liberal-word)
+      (spiffy-tm-backward-liberal-word)
+      (buffer-substring (point-min) (point))))
+
   (desc "spiffy shift-arrows")
   (expect "ijkl"
     (with-gibberish-buffer
@@ -131,6 +154,20 @@
     (with-gibberish-buffer
      (spiffy-tm-arrow-left-word)
      (buffer-substring (region-beginning) (region-end))))
+
+  (expect "a_b"
+    (with-temp-buffer
+      (insert "a_b c_d e_f")
+      (goto-char (point-min))
+      (spiffy-tm-arrow-right-liberal-word)
+      (buffer-substring (region-beginning) (region-end))))
+
+  (expect "e_f"
+    (with-temp-buffer
+      (insert "a_b c_d e_f")
+      (goto-char (point-max))
+      (spiffy-tm-arrow-left-liberal-word)
+      (buffer-substring (region-beginning) (region-end))))
 
   (expect "abc de"
     (with-temp-buffer

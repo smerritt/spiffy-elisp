@@ -37,8 +37,12 @@
 ; control shift up/down don't select text, and don't seem to do anything useful.
 (spiffy-tm-define-key [(control shift left)] 'spiffy-tm-arrow-left-word)
 (spiffy-tm-define-key [(control shift right)] 'spiffy-tm-arrow-right-word)
+(spiffy-tm-define-key [(super up)] 'backward-paragraph)
+(spiffy-tm-define-key [(super down)] 'forward-paragraph)
 (spiffy-tm-define-key [(super left)] 'spiffy-tm-backward-liberal-word)
 (spiffy-tm-define-key [(super right)] 'spiffy-tm-forward-liberal-word)
+(spiffy-tm-define-key [(super shift up)] 'spiffy-tm-arrow-backward-paragraph)
+(spiffy-tm-define-key [(super shift down)] 'spiffy-tm-arrow-forward-paragraph)
 (spiffy-tm-define-key [(super shift left)] 'spiffy-tm-arrow-backward-liberal-word)
 (spiffy-tm-define-key [(super shift right)] 'spiffy-tm-arrow-forward-liberal-word)
 (spiffy-tm-define-key [(meta shift up)] 'spiffy-tm-arrow-bob)
@@ -163,6 +167,8 @@ The project root is the directory with a .git directory in it."
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-right-line (lambda () (move-end-of-line nil)))
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-bob (lambda () (goto-char (point-min))))
 (spiffy-tm-make-shifty-arrow spiffy-tm-arrow-eob (lambda () (goto-char (point-max))))
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-forward-paragraph 'forward-paragraph)
+(spiffy-tm-make-shifty-arrow spiffy-tm-arrow-backward-paragraph 'backward-paragraph)
 
 (defmacro spiffy-tm-make-delimitizers (left-form right-form function-suffix-form)
   (let* ((function-suffix (eval function-suffix-form))

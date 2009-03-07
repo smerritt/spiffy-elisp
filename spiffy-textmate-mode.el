@@ -117,6 +117,7 @@ The project root is the directory with a .git directory in it."
                         (> aval bval)))))))))
 
 (defun spiffy-tm-grep-project (regexp)
+  "Search all the files in the current project for the specified string/regex."
   (interactive
    (list (grep-read-regexp)))
   (grep-compute-defaults)      ; rgrep only does this when called interactively
@@ -209,7 +210,7 @@ The project root is the directory with a .git directory in it."
 (mapcar (lambda (spec) (spiffy-tm-make-delimitizers (car spec) (cadr spec) (caddr spec))) spiffy-tm-paired-characters)
 
 (defun spiffy-tm-backspace (&optional arg)
-  "Delete the region (if active), else delete balanced (), [], etc (if in the middle), else delete a character."
+  "Delete the region if active, else delete balanced (), [], etc (if in the middle), else delete a character."
   (interactive "p")
   (if mark-active
       (kill-region (region-beginning) (region-end))
@@ -224,6 +225,8 @@ The project root is the directory with a .git directory in it."
       (spiffy-tm-backspace (1- arg))))
 
 (defun spiffy-tm-delete (&optional arg)
+  "Delete the region if active, else delete the character after point.
+With prefix arg, delete that many characters after point."
   (interactive "p")
   (if mark-active
       (kill-region (region-beginning) (region-end))
@@ -234,11 +237,15 @@ The project root is the directory with a .git directory in it."
 (modify-syntax-entry ?_ "w" spiffy-tm-liberal-word-syntax-table)
 
 (defun spiffy-tm-forward-liberal-word (&optional arg)
+  "Move point forward a word. With prefix arg n, move forward n words.
+The underscore character (_) is considered a word constituent."
   (interactive "p")
   (with-syntax-table spiffy-tm-liberal-word-syntax-table
     (forward-word arg)))
 
 (defun spiffy-tm-backward-liberal-word (&optional arg)
+  "Move point backward a word. With prefix arg n, move backward n words.
+The underscore character (_) is considered a word constituent."
   (interactive "p")
   (with-syntax-table spiffy-tm-liberal-word-syntax-table
     (backward-word arg)))
@@ -307,6 +314,8 @@ If the mark is active, kill the region (Emacs behavior)."
   (funcall (key-binding "\r")))
 
 (defun spiffy-tm-open-line-before ()
+  "Insert a newline and leave point before it.
+Point will be at the correct indentation level for the current mode."
   (interactive)
   (move-beginning-of-line nil)
   (open-line 1)

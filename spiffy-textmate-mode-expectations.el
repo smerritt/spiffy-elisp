@@ -53,6 +53,9 @@
     (push-mark (+ 7 (point)) t t)
     ,@body))
 
+(defun text-in-region ()
+  (buffer-substring (region-beginning) (region-end)))
+
 (expectations
   (desc "spiffy-tm-project-files-for")
   (expect (list
@@ -102,24 +105,24 @@
      (spiffy-tm-arrow-right)
      (spiffy-tm-arrow-right)
      (spiffy-tm-arrow-right)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect "\ngh"
     (with-gibberish-buffer
      (spiffy-tm-arrow-left)
      (spiffy-tm-arrow-left)
      (spiffy-tm-arrow-left)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect "ijkl\n12"
     (with-gibberish-buffer
      (spiffy-tm-arrow-down)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect "cdef\ngh"
     (with-gibberish-buffer
      (spiffy-tm-arrow-up)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect " e_f"
     (with-temp-buffer
@@ -148,50 +151,50 @@
   (expect "ijkl"
     (with-gibberish-buffer
      (spiffy-tm-arrow-right-word)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect "gh"
     (with-gibberish-buffer
      (spiffy-tm-arrow-left-word)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect "a_b"
     (with-temp-buffer
       (insert "a_b c_d e_f")
       (goto-char (point-min))
       (spiffy-tm-arrow-right-liberal-word)
-      (buffer-substring (region-beginning) (region-end))))
+      (text-in-region)))
 
   (expect "e_f"
     (with-temp-buffer
       (insert "a_b c_d e_f")
       (goto-char (point-max))
       (spiffy-tm-arrow-left-liberal-word)
-      (buffer-substring (region-beginning) (region-end))))
+      (text-in-region)))
 
   (expect "abc de"
     (with-temp-buffer
      (insert "abc def ghi\n123")
      (goto-char (+ 6 (point-min)))
      (spiffy-tm-arrow-left-line)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect "f ghi"
     (with-temp-buffer
      (insert "abc def ghi\n123")
      (goto-char (+ 6 (point-min)))
      (spiffy-tm-arrow-right-line)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect "abcdef\ngh"
     (with-gibberish-buffer
      (spiffy-tm-arrow-bob)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (expect "ijkl\n123456\n"
     (with-gibberish-buffer
      (spiffy-tm-arrow-eob)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   (desc "select-line")
   ;; select current line when mark is not active
@@ -200,7 +203,7 @@
       (insert "abc\ndef\nghi\njkl")
       (goto-char (+ 5 (point-min)))
       (spiffy-tm-select-line)
-      (buffer-substring (region-beginning) (region-end))))
+      (text-in-region)))
 
   ;; push region boundaries outward to have only whole lines selected
   (expect "def\nghi\n"
@@ -209,7 +212,7 @@
       (push-mark (+ 5 (point-min)) t t)  ; after d
       (goto-char (+ 10 (point-min)))     ; after h
       (spiffy-tm-select-line)
-      (buffer-substring (region-beginning) (region-end))))
+      (text-in-region)))
 
   ;; same as before, but with point before mark
   (expect "def\nghi\n"
@@ -219,7 +222,7 @@
       (goto-char (+ 10 (point-min)))     ; after h
       (exchange-point-and-mark)
       (spiffy-tm-select-line)
-      (buffer-substring (region-beginning) (region-end))))
+      (text-in-region)))
 
   ;; be okay at the end of the buffer
   (expect "def\nghi"
@@ -228,7 +231,7 @@
       (push-mark (+ 5 (point-min)) t t)  ; after d
       (goto-char (+ 10 (point-min)))     ; after h
       (spiffy-tm-select-line)
-      (buffer-substring (region-beginning) (region-end))))
+      (text-in-region)))
 
   (desc "spiffy fancy left delimiters")
   (expect "a(bcd)ef"
@@ -388,7 +391,7 @@
       (insert "abc def ghi")
       (goto-char 2)  ; b
       (spiffy-tm-select-current-word-or-kill-region)
-      (buffer-substring (region-beginning) (region-end))))
+      (text-in-region)))
 
   (expect " def ghi"      ; kill-region
     (with-temp-buffer
@@ -494,7 +497,7 @@
   (expect "XY"
     (with-short-scoot-test-buffer
      (call-interactively 'spiffy-tm-scoot-right)
-     (buffer-substring (region-beginning) (region-end))))
+     (text-in-region)))
 
   ; and leave the text highlighted
   (expect nil

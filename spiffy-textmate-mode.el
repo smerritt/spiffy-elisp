@@ -274,14 +274,18 @@ If the mark is active, kill the region (Emacs behavior)."
     (spiffy-tm-select-word-under-point)))
 
 (defun spiffy-tm-kill-entire-line ()
-  "Kill the entire current line."
+  "Kill the entire current line or all lines partially in the region."
   (interactive)
-  (let*
-      ((end (save-excursion
-              (move-end-of-line nil)
-              (spiffy-tm-safe-forward-char)
-              (point))))
-    (kill-region (point-at-bol) end)))
+  (if mark-active
+      (progn
+        (spiffy-tm-select-line)
+        (kill-region (region-beginning) (region-end)))
+    (let*
+        ((end (save-excursion
+                (move-end-of-line nil)
+                (spiffy-tm-safe-forward-char)
+                (point))))
+      (kill-region (point-at-bol) end))))
 
 (defun spiffy-tm-comment-dwim ()
   "Comment/uncomment either the current line or the region."

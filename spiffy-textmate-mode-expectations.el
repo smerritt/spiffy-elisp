@@ -413,6 +413,14 @@
       (spiffy-tm-kill-entire-line)
       (buffer-string)))
 
+  (expect "abc\n456"
+    (with-temp-buffer
+      (insert "abc\ndef\n123\n456")
+      (goto-char (+ 5 (point-min)))
+      (push-mark nil t t)
+      (forward-line)
+      (spiffy-tm-kill-entire-line)
+      (buffer-string)))
 
   (desc "commenting stuff out")
   ; no region? comment the line you're on

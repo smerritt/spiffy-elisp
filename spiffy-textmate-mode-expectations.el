@@ -363,6 +363,24 @@
       (spiffy-tm-backspace)
       (buffer-string)))
 
+  (desc "delete key")
+  (expect "ad"
+    (with-temp-buffer
+      (insert "abcd")
+      (goto-char (point-min))
+      (forward-char 1)
+      (push-mark nil t t)
+      (forward-char 2)
+      (spiffy-tm-delete)
+      (buffer-string)))
+
+  (expect "acd"
+    (with-temp-buffer
+      (insert "abcd")
+      (goto-char (point-min))
+      (forward-char 1)
+      (spiffy-tm-delete)
+      (buffer-string)))
 
   (desc "select current word or kill region")
   (expect "abc"      ; select current word

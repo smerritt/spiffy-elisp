@@ -484,7 +484,14 @@
     (with-temp-buffer
       (insert "abc\ndef")
       (goto-char (1- (point-max)))
-      (spiffy-tm-open-line-before)
+      (call-interactively 'spiffy-tm-open-line-before)
+      (buffer-string)))
+
+  (expect "abc\n\n\ndef"
+    (with-temp-buffer
+      (insert "abc\ndef")
+      (goto-char (1- (point-max)))
+      (spiffy-tm-open-line-before 2)
       (buffer-string)))
 
   (expect "class Foo\n  def foo?\n    \n    true\n  end\nend\n"

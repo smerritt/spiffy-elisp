@@ -313,12 +313,13 @@ If the mark is active, kill the region (Emacs behavior)."
   (move-end-of-line nil)
   (funcall (key-binding "\r")))
 
-(defun spiffy-tm-open-line-before ()
+(defun spiffy-tm-open-line-before (&optional arg)
   "Insert a newline and leave point before it.
-Point will be at the correct indentation level for the current mode."
-  (interactive)
+Point will be at the correct indentation level for the current mode.
+With prefix argument, open that many lines."
+  (interactive "p")
   (move-beginning-of-line nil)
-  (open-line 1)
+  (open-line (or arg 1))
   (indent-according-to-mode))
 
 

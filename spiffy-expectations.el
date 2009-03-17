@@ -14,6 +14,9 @@
 
 (setq tempdir (make-temp-file "spiffy-expectations" t))
 
+(defun digits-in (x)
+  (1+ (truncate (log10 x))))
+
 (expectations
   ;; generic stuff
   (desc "spiffy-cwd")
@@ -81,4 +84,32 @@
       (spiffy-kill-region-or-line)
       (buffer-string)))
 
+  (desc "random numbers")
+  (expect 1 (digits-in 5))
+  (expect 2 (digits-in 99))
+  (expect 3 (digits-in 100))
+
+  ; lower bound
+  (expect 3
+    (flet ((random (x) 0))
+      (digits-in (spiffy-random-ndigit 3))))
+
+  (expect 5
+    (flet ((random (x) 0))
+      (digits-in (spiffy-random-ndigit 5))))
+
+  ; upper bound
+  (expect 3
+    (flet ((random (x) x))
+      (digits-in (spiffy-random-ndigit 3))))
+
+  (expect 5
+    (flet ((random (x) x))
+      (digits-in (spiffy-random-ndigit 5))))
+
+  ; different randomly-generated number --> different result
+  (expect nil
+    (=
+     (flet ((random (x) 456)) (spiffy-random-ndigit 4))
+     (flet ((random (x) 567)) (spiffy-random-ndigit 4))))
 )

@@ -80,3 +80,9 @@
   (if mark-active
       (kill-region (region-beginning) (region-end))
     (kill-line)))
+
+(defun spiffy-random-ndigit (digits)
+  (let* ((min (expt 10 (1- digits)))
+         (max (1- (expt 10 digits))))
+    (+ min
+       (random (- max min)))))

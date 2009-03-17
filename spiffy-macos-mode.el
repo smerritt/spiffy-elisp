@@ -14,7 +14,15 @@
 
 (defvar *spiffy-macos-keymap* (make-sparse-keymap) "Keybindings go in here")
 (define-key *spiffy-macos-keymap* [(meta s)] 'save-buffer)
-(define-key *spiffy-macos-keymap* [(meta c)] 'kill-ring-save)
+(define-key *spiffy-macos-keymap* [(meta c)]
+  (lambda ()
+    "Copies the highlighted text. Leaves the text highlighted after."
+    (interactive)
+    (if mark-active
+        (progn
+          (kill-ring-save (region-beginning) (region-end))
+          (setq deactivate-mark nil)))))
+
 (define-key *spiffy-macos-keymap* [(meta v)] 'yank)
 (define-key *spiffy-macos-keymap* [(meta z)] 'undo)
 

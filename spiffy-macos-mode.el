@@ -23,7 +23,12 @@
           (kill-ring-save (region-beginning) (region-end))
           (setq deactivate-mark nil)))))
 
-(define-key *spiffy-macos-keymap* [(meta v)] 'yank)
+(define-key *spiffy-macos-keymap* [(meta v)]
+  (lambda ()
+    "Paste the last killed text. Overwrites any highlighted text."
+    (interactive)
+    (if mark-active (delete-region (region-beginning) (region-end)))
+    (yank)))
 (define-key *spiffy-macos-keymap* [(meta z)] 'undo)
 
 ;; Tie it all together

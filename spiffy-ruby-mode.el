@@ -63,6 +63,7 @@
 ;;   spec puts the filename in failures...
 (defun spiffy-ruby-rerun-last-test ()
   (interactive)
+  (save-buffer)
   (spiffy-run-in-directory
    spiffy-ruby-last-test-dir
    (compile spiffy-ruby-last-test-command)))

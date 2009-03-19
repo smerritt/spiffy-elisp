@@ -86,3 +86,26 @@
          (max (1- (expt 10 digits))))
     (+ min
        (random (- max min)))))
+
+(defun spiffy-insert-random-number (&optional digits)
+  (interactive "P")                     ; not "p"; that defaults to 1
+  (insert (int-to-string (spiffy-random-ndigit (or digits 5)))))
+
+;; This keymap is composed of just the mnemonics I came up with.
+;; The only reason it's defined here is because I find these easier
+;; than remembering all the function names. There's no particular
+;; organization here.
+(defvar *spiffy-keymap* (make-sparse-keymap))
+(define-key *spiffy-keymap* [(control ?\;) ?r ?n] 'spiffy-insert-random-number)
+
+(defvar spiffy-enable-minor-mode nil
+  "Whether or not to enable the minor mode in a new buffer by default.
+Default is nil.
+
+To use, (setq spiffy-enable-minor-mode t) before requiring 'spiffy.")
+
+(define-minor-mode spiffy-mode
+  "Spiffy minor mode. Stuff that's generally useful when coding."
+  t
+  " s"
+  *spiffy-keymap*)

@@ -112,4 +112,16 @@
     (=
      (flet ((random (x) 456)) (spiffy-random-ndigit 4))
      (flet ((random (x) 567)) (spiffy-random-ndigit 4))))
+
+  (desc "inserting a random number")
+  (expect 5                             ; default
+    (with-temp-buffer
+      (call-interactively 'spiffy-insert-random-number)
+      (length (buffer-string))))
+
+  (expect 7
+    (with-temp-buffer
+      (spiffy-insert-random-number 7)
+      (length (buffer-string))))
+
 )

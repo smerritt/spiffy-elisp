@@ -97,6 +97,10 @@
 ;; organization here.
 (defvar *spiffy-keymap* (make-sparse-keymap))
 (define-key *spiffy-keymap* [(control ?\;) ?r ?n] 'spiffy-insert-random-number)
+(define-key *spiffy-keymap* [(control k)] 'spiffy-kill-region-or-line) ;; improves on kill-line
+(define-key *spiffy-keymap* [(control ?\')] 'spiffy-start-or-finish-keyboard-macro)
+(define-key *spiffy-keymap* [(meta ?\')] 'call-last-kbd-macro) ;; clobbers abbrev-prefix-mark
+(define-key *spiffy-keymap* [(super ?\')] 'edit-last-kbd-macro)
 
 (defvar spiffy-enable-minor-mode nil
   "Whether or not to enable the minor mode in a new buffer by default.

@@ -124,4 +124,11 @@
       (spiffy-insert-random-number 7)
       (length (buffer-string))))
 
+  (desc "inserting a random IP")
+  (expect 0
+    (string-match
+     "\\(\\([0-9]\\)\\{1,3\\}\\.\\)\\{3\\}\\([0-9]\\)\\{1,3\\}" ; dotted quad IPv4
+     (with-temp-buffer
+       (call-interactively 'spiffy-insert-random-ip)
+       (buffer-string))))
 )

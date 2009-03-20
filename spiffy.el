@@ -87,6 +87,26 @@
     (+ min
        (random (- max min)))))
 
+(defun spiffy-downfrom (n)
+  "Generate the list (n n-1 n-2 ... 1).
+With negative argument n, returns the list (n)."
+  (cond
+   ((<= n 1) (list n))
+   (t (cons n (spiffy-downfrom (1- n))))))
+
+
+(defun spiffy-random-ip ()
+  "Generate a random IPv4 address in dotted-quad format."
+  (mapconcat
+   (lambda (dontcare) (int-to-string (1+ (random 254))))
+   (spiffy-downfrom 4)                  ; or any list of length 4
+   "."))
+
+(defun spiffy-insert-random-ip ()
+  "Insert a random IPv4 address in dotted-quad format."
+  (interactive)
+  (insert (spiffy-random-ip)))
+
 (defun spiffy-insert-random-number (&optional digits)
   (interactive "P")                     ; not "p"; that defaults to 1
   (insert (int-to-string (spiffy-random-ndigit (or digits 5)))))
@@ -96,6 +116,7 @@
 ;; than remembering all the function names. There's no particular
 ;; organization here.
 (defvar *spiffy-keymap* (make-sparse-keymap))
+(define-key *spiffy-keymap* [(control ?\;) ?r ?i] 'spiffy-insert-random-ip)
 (define-key *spiffy-keymap* [(control ?\;) ?r ?n] 'spiffy-insert-random-number)
 (define-key *spiffy-keymap* [(control k)] 'spiffy-kill-region-or-line) ;; improves on kill-line
 (define-key *spiffy-keymap* [(control ?\')] 'spiffy-start-or-finish-keyboard-macro)

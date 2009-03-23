@@ -28,6 +28,7 @@
 (spiffy-tm-define-key [(meta left)] (lambda () (interactive) (move-beginning-of-line nil)))
 (spiffy-tm-define-key [(meta right)] (lambda () (interactive) (move-end-of-line nil)))
 (spiffy-tm-define-key [(meta super ?\])] 'align)
+(spiffy-tm-define-key [(meta super ?\[)] 'indent-region)
 
 ;; stuff that's defined in here
 (spiffy-tm-define-key [(shift up)] 'spiffy-tm-arrow-up)

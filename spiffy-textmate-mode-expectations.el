@@ -162,14 +162,14 @@
     (with-temp-buffer
       (insert "a_b c_d e_f")
       (goto-char (point-min))
-      (spiffy-tm-arrow-right-liberal-word)
+      (spiffy-tm-arrow-forward-liberal-word)
       (text-in-region)))
 
   (expect "e_f"
     (with-temp-buffer
       (insert "a_b c_d e_f")
       (goto-char (point-max))
-      (spiffy-tm-arrow-left-liberal-word)
+      (spiffy-tm-arrow-backward-liberal-word)
       (text-in-region)))
 
   (expect "abc de"

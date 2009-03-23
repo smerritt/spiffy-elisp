@@ -670,4 +670,65 @@
      (call-interactively 'spiffy-tm-yank-and-indent)
      (spiffy-tm-yank-pop-and-indent 2)
      (buffer-string)))
+
+  (desc "indenting")
+  (expect "  foo"                       ; basic indent of the current line
+    (with-temp-buffer
+      (setq tab-width 2)
+      (insert "foo")
+      (call-interactively 'spiffy-tm-indent-rigidly)
+      (buffer-string)))
+
+  (expect "   foo"                      ; honor tab-width
+    (with-temp-buffer
+      (setq tab-width 3)
+      (insert "foo")
+      (call-interactively 'spiffy-tm-indent-rigidly)
+      (buffer-string)))
+
+  (expect "  foo\n  bar\nbaz"           ; operate on the region
+    (with-temp-buffer
+      (setq tab-width 2)
+      (insert "foo\nbar\nbaz")
+      (push-mark (point-min) t t)
+      (goto-char (point-min))
+      (forward-word 2)
+      (call-interactively 'spiffy-tm-indent-rigidly)
+      (buffer-string)))
+
+  ; take an arg to do it n times
+  (expect "      foo"
+    (with-temp-buffer
+      (setq tab-width 2)
+      (insert "foo")
+      (spiffy-tm-indent-rigidly 3)
+      (buffer-string)))
+
+  ; take a negative arg to outdent
+  (expect "foo"
+    (with-temp-buffer
+      (insert "  foo")
+      (spiffy-tm-indent-rigidly -1)
+      (buffer-string)))
+
+  ; leave the region active
+  (expect nil
+    (with-temp-buffer
+      (insert "  foo")
+      (spiffy-tm-indent-rigidly -1)
+      deactivate-mark))
+
+  ; outdent command
+  (expect "foo"
+    (with-temp-buffer
+      (insert "  foo")
+      (call-interactively 'spiffy-tm-outdent-rigidly)
+      (buffer-string)))
+
+  ; outdent command also takes prefix arg
+  (expect "foo"
+    (with-temp-buffer
+      (insert "      foo")
+      (spiffy-tm-outdent-rigidly 3)
+      (buffer-string)))
 )

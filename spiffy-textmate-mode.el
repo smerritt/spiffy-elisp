@@ -53,6 +53,8 @@
 (spiffy-tm-define-key [(control meta down)] 'spiffy-tm-scoot-down)
 (spiffy-tm-define-key [(control meta left)] 'spiffy-tm-scoot-left)
 (spiffy-tm-define-key [(control meta right)] 'spiffy-tm-scoot-right)
+(spiffy-tm-define-key [(meta ?\[)] 'spiffy-tm-outdent-rigidly)
+(spiffy-tm-define-key [(meta ?\])] 'spiffy-tm-indent-rigidly)
 (spiffy-tm-define-key [(meta F)] 'spiffy-tm-grep-project)
 (spiffy-tm-define-key [(meta t)] 'spiffy-tm-open-file-in-project)
 (spiffy-tm-define-key [(control x) ?4 (meta t)] 'spiffy-tm-open-file-in-project-other-window)
@@ -387,9 +389,41 @@ After replacing, indent it."
          (goto-char (point-max))
        (forward-line)))))
 
-;;; Utility functions
+(defun spiffy-tm-indent-rigidly (how-far)
+  "Indent the region or current line by 1 tab-stop.
+With prefix arg n, indent it by n tab-stops.
+If n is negative, outdent by that many tab-stops.
+The width of a tab-stop is determined by the variable tab-width."
+  (interactive "p")
+  (let ((start (spiffy-tm-region-or-line-beginning))
+        (end (spiffy-tm-region-or-line-end)))
+    (indent-rigidly start end (* tab-width how-far)))
+  (setq deactivate-mark nil))
+
+(defun spiffy-tm-outdent-rigidly (how-far)
+  "Outdent the region or current line by 1 tab-stop.
+With prefix arg n, outdent it by n tab-stops.
+The width of a tab-stop is determined by the variable tab-width."
+  (interactive "p")
+  (spiffy-tm-indent-rigidly (* -1 how-far)))
+
+;;;;;;;; Utility functions
 (defun spiffy-tm-safe-forward-char ()
   (unless (eobp) (forward-char)))
+
+(defun spiffy-tm-region-or-line-beginning ()
+  (if mark-active
+      (region-beginning)
+    (point-at-bol)))
+
+;; NB: this usually doesn't give you the end of the line, but the start of the next one.
+;; This is intentional.
+(defun spiffy-tm-region-or-line-end ()
+  (if mark-active
+      (region-end)
+    (if (= (point-at-eol) (point-max))
+        (point-at-eol)
+      (1+ (point-at-eol)))))
 
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."

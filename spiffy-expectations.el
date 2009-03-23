@@ -84,6 +84,14 @@
       (spiffy-kill-region-or-line)
       (buffer-string)))
 
+  ;; behave like kill-line wrt prefix argument
+  (expect "d\nefgh"
+    (with-temp-buffer
+      (insert "abcd\nefgh")
+      (goto-char (+ 3 (point-min)))
+      (spiffy-kill-region-or-line 0)
+      (buffer-string)))
+
   (desc "random numbers")
   (expect 1 (digits-in 5))
   (expect 2 (digits-in 99))

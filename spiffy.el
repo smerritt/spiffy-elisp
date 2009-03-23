@@ -75,11 +75,11 @@
       (kmacro-end-macro nil)
     (kmacro-start-macro nil)))
 
-(defun spiffy-kill-region-or-line ()
-  (interactive)
+(defun spiffy-kill-region-or-line (&optional arg)
+  (interactive "P")
   (if mark-active
       (kill-region (region-beginning) (region-end))
-    (kill-line)))
+    (kill-line arg)))
 
 (defun spiffy-random-ndigit (digits)
   (let* ((min (expt 10 (1- digits)))

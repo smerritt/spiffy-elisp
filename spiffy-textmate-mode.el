@@ -367,23 +367,19 @@ After replacing, indent it."
 
 (defun spiffy-tm-scoot-up (&optional start end)
   "Move the region or current line up one line."
-  (interactive (if mark-active (list (region-beginning) (region-end))))
+  (interactive (list (spiffy-tm-region-or-line-beginning) (spiffy-tm-region-or-line-end)))
   (spiffy-tm-scoot
-   (or start (point-at-bol))
-   (or end (if (= (point-at-eol) (point-max))
-               (point-at-eol)
-             (1+ (point-at-eol))))
+   start
+   end
    (lambda () (= (line-number-at-pos (point)) (line-number-at-pos (point-min))))
    (lambda () (forward-line -1))))
 
 (defun spiffy-tm-scoot-down (&optional start end)
   "Move the region or current line down one line."
-  (interactive (if mark-active (list (region-beginning) (region-end))))
+  (interactive (list (spiffy-tm-region-or-line-beginning) (spiffy-tm-region-or-line-end)))
   (spiffy-tm-scoot
-   (or start (point-at-bol))
-   (or end (if (= (point-at-eol) (point-max))
-               (point-at-eol)
-             (1+ (point-at-eol))))
+   start
+   end
    (lambda () nil)
    (lambda ()
      (if (= (line-number-at-pos (point)) (line-number-at-pos (point-max)))

@@ -61,7 +61,6 @@
 (spiffy-tm-define-key [(control x) ?4 (meta t)] 'spiffy-tm-open-file-in-project-other-window)
 (spiffy-tm-define-key [(control x) ?5 (meta t)] 'spiffy-tm-open-file-in-project-other-frame)
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
-(spiffy-tm-define-key [(delete)] 'spiffy-tm-delete)
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
 (spiffy-tm-define-key [(control y)] 'spiffy-tm-yank-and-indent)
@@ -226,14 +225,6 @@ The project root is the directory with a .git directory in it."
     (backward-delete-char-untabify 1))
   (if (and arg (< 1 arg))
       (spiffy-tm-backspace (1- arg))))
-
-(defun spiffy-tm-delete (&optional arg)
-  "Delete the region if active, else delete the character after point.
-With prefix arg, delete that many characters after point."
-  (interactive "p")
-  (if mark-active
-      (kill-region (region-beginning) (region-end))
-    (delete-char (or arg 1))))
 
 (defvar spiffy-tm-liberal-word-syntax-table (make-syntax-table)
   "Syntax table with _ as a word constituent")
@@ -424,6 +415,5 @@ The width of a tab-stop is determined by the variable tab-width."
 
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."
-  nil
-  " sTM"
-  *spiffy-tm-keymap*)
+  nil " sTM" *spiffy-tm-keymap*
+  (delete-selection-mode t))

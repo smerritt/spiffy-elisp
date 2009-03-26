@@ -51,23 +51,23 @@ Keybindings
 * __super-shift-left__: move left a word, considering underscore as a word constituent and select
 * __super-shift-right__: move right a word, considering underscore as a word constituent and select
 * __Textmate-style parens__: typing a left delimiter (that is, "(", "[", or "{") also inserts the right delimiter and leaves the point between them. Typing the right delimiter moves over the ), ], or } instead of inserting a new one. If the cursor is between an empty pair of balanced delimiters, typing backspace will eliminate both of them.
-* __M-F__: grep in project, where the project root is the directory with the .git directory in it
-* __C-K__: kill the current line
-* __M-l__: Go to line *(overrides downcase-word)*
-* __M-L__: highlight the current line or move the region's boundaries outward to line boundaries.
-* __M-t__: choose a file in the project, where the project root is the directory with the .git directory in it. *(overrides transpose-words)*
-* __C-x 4 M-t__: choose a file in the project and open it in another window (Emacs window, not GUI window)
-* __C-x 5 M-t__: choose a file in the project and open it in another frame (GUI window)
-* __C-w__: selects the current word if no text is selected (Textmate behavior). If text is selected, C-w kills it (Emacs behavior). *(overrides and enhances kill-region)*
-* __C-y__: yank and indent text. *(overrides and enhances yank)*
-* __M-y__: yank-pop and indent result. *(overrides and enhances yank-pop)*
-* __M-/__: comment/uncomment the current line/region. *(overrides dabbrev-expand)*
-* __M-[__: outdent the region or current line
-* __M-]__: indent the region or current line
-* __M-s-[__: fix indentation in region
-* __M-s-]__: align the region
-* __M-delete__: kill to end of line
-* __M-return__: skip to the end of the line and insert a newline.
-* __M-s-return__: open and indent a new line above the current one.
+* __meta-F__: grep in project, where the project root is the directory with the .git directory in it
+* __control-K__: kill the current line
+* __meta-l__: Go to line *(overrides downcase-word)*
+* __meta-L__: highlight the current line or move the region's boundaries outward to line boundaries.
+* __meta-t__: choose a file in the project, where the project root is the directory with the .git directory in it. *(overrides transpose-words)*
+* __control-x 4 meta-t__: choose a file in the project and open it in another window (Emacs window, not GUI window)
+* __control-x 5 meta-t__: choose a file in the project and open it in another frame (GUI window)
+* __control-w__: selects the current word if no text is selected (Textmate behavior). If text is selected, control-w kills it (Emacs behavior). *(overrides and enhances kill-region)*
+* __control-y__: yank and indent text. *(overrides and enhances yank)*
+* __meta-y__: yank-pop and indent result. *(overrides and enhances yank-pop)*
+* __meta-/__: comment/uncomment the current line/region. *(overrides dabbrev-expand)*
+* __meta-[__: outdent the region or current line
+* __meta-]__: indent the region or current line
+* __meta-s-[__: fix indentation in region
+* __meta-s-]__: align the region
+* __meta-delete__: kill to end of line
+* __meta-return__: skip to the end of the line and insert a newline.
+* __meta-s-return__: open and indent a new line above the current one.
 * __backspace__: delete selected text or character before point. In the middle of (), [], or {}, it deletes the pair. *(overrides and enhances delete-backward-char)*
-* __M-backspace__: kill to beginning of line *(overrides backward-kill-word)*
+* __meta-backspace__: kill to beginning of line *(overrides backward-kill-word)*

@@ -98,7 +98,7 @@
      (spiffy-make-shell-command "ruby" "-c" (buffer-file-name)))))
 
 (defun spiffy-ruby-is-merb-root (dir)
-  (file-exists-p (concat (file-name-as-directory dir) "bin/merb")))
+  (file-exists-p (concat (file-name-as-directory dir) "config/init.rb")))
 
 (defun spiffy-ruby-merb-root-for (filename)
   (let ((as-dir (file-name-as-directory filename)))
@@ -117,9 +117,11 @@
 (defun spiffy-ruby-maybe-merbified-binary (filename program relative-path)
   (let ((merb-root (spiffy-ruby-merb-root-for filename)))
     (if merb-root
-        (reduce
-         (lambda (full partial) (concat (file-name-as-directory full) partial))
-         (list merb-root relative-path program))
+        (progn
+          (let ((merbified-program (reduce
+                                    (lambda (full partial) (concat (file-name-as-directory full) partial))
+                                    (list merb-root relative-path program))))
+            (or (and (file-exists-p merbified-program) merbified-program) program)))
       program)))             ; whatever the system's one is (hope it has one)
 
 ;; XXX test me

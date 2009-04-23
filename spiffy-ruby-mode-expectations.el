@@ -26,18 +26,25 @@
   (desc "spiffy-ruby-is-merb-root")
   (expect t
     (mocklet
-        (((file-exists-p "/path/to/somewhere/bin/merb") => t))
+        (((file-exists-p "/path/to/somewhere/config/init.rb") => t))
       (spiffy-ruby-is-merb-root "/path/to/somewhere/")))
 
   (expect nil
     (mocklet
-        (((file-exists-p "/path/to/somewhere/bin/merb") => nil))
+        (((file-exists-p "/path/to/somewhere/config/init.rb") => nil))
       (spiffy-ruby-is-merb-root "/path/to/somewhere/")))
 
   (desc "spiffy-ruby-spec-binary-to-run-for")
   (expect "/somewhere/bin/spec"
     (mocklet
-        (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => "/somewhere"))
+        (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => "/somewhere")
+         ((file-exists-p "/somewhere/bin/spec") => t))
+      (spiffy-ruby-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
+
+  (expect "spec"         ; file doesn't exist (Merb app sans bundled gems)
+    (mocklet
+        (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => "/somewhere")
+         ((file-exists-p "/somewhere/bin/spec") => nil))
       (spiffy-ruby-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
 
   (expect "spec"
@@ -48,17 +55,18 @@
   (desc "spiffy-ruby-rdebug-binary-to-run-for")
   (expect "/somewhere/bin/rdebug"
     (mocklet
-    (((spiffy-ruby-merb-root-for "/somewhere/rdebug/foo.rb") => "/somewhere"))
-    (spiffy-ruby-rdebug-binary-to-run-for "/somewhere/rdebug/foo.rb")))
+        (((spiffy-ruby-merb-root-for "/somewhere/rdebug/foo.rb") => "/somewhere")
+         ((file-exists-p "/somewhere/bin/rdebug") => t))
+      (spiffy-ruby-rdebug-binary-to-run-for "/somewhere/rdebug/foo.rb")))
 
   (expect "rdebug"
     (mocklet
-    (((spiffy-ruby-merb-root-for "/somewhere/rdebug/foo.rb") => nil))
-    (spiffy-ruby-rdebug-binary-to-run-for "/somewhere/rdebug/foo.rb")))
+        (((spiffy-ruby-merb-root-for "/somewhere/rdebug/foo.rb") => nil))
+      (spiffy-ruby-rdebug-binary-to-run-for "/somewhere/rdebug/foo.rb")))
 
   (desc "spiffy-ruby-merb-root-for")
   (expect "/my/project/"
-    (flet ((file-exists-p (file) (equal file "/my/project/bin/merb")))
+    (flet ((file-exists-p (file) (equal file "/my/project/config/init.rb")))
       (spiffy-ruby-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
 
   (desc "run spec under point")
@@ -140,9 +148,10 @@
     (let ((gud-rdebug-command-name "rdebug --emacs 3"))
       (flet ((rdebug (&optional args) gud-rdebug-command-name)
              (spiffy-ruby-merb-root-for (x) "/tmp")
-             (call-interactively (x) (funcall x)))
-        (with-ruby-file-buffer
-         (spiffy-ruby-rdebug)))))
+             (call-interactively (x) (funcall x))
+             (spiffy-ruby-rdebug-binary-to-run-for (x) "/tmp/bin/rdebug"))
+          (with-ruby-file-buffer
+           (spiffy-ruby-rdebug)))))
 
   (expect "original-rdebug"             ; don't screw with the original value
     (let ((gud-rdebug-command-name "original-rdebug"))

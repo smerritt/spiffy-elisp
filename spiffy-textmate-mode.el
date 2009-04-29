@@ -282,12 +282,7 @@ If the mark is active, kill the region (Emacs behavior)."
       (progn
         (spiffy-tm-select-line)
         (kill-region (region-beginning) (region-end)))
-    (let*
-        ((end (save-excursion ; XXX refactor? see spiffy-tm-start-of-next-line
-                (move-end-of-line nil)
-                (spiffy-tm-safe-forward-char)
-                (point))))
-      (kill-region (point-at-bol) end))))
+    (kill-region (point-at-bol) (spiffy-tm-start-of-next-line))))
 
 (defun spiffy-tm-duplicate-line ()
   (interactive)

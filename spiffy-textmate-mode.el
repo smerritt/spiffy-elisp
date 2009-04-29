@@ -63,6 +63,7 @@
 (spiffy-tm-define-key [(backspace)] 'spiffy-tm-backspace)
 (spiffy-tm-define-key [(control w)] 'spiffy-tm-select-current-word-or-kill-region)
 (spiffy-tm-define-key [(control K)] 'spiffy-tm-kill-entire-line)
+(spiffy-tm-define-key [(control D)] 'spiffy-tm-duplicate-line)
 (spiffy-tm-define-key [(control y)] 'spiffy-tm-yank-and-indent)
 (spiffy-tm-define-key [(meta y)] 'spiffy-tm-yank-pop-and-indent)
 (spiffy-tm-define-key [(meta /)] 'spiffy-tm-comment-dwim)
@@ -282,11 +283,22 @@ If the mark is active, kill the region (Emacs behavior)."
         (spiffy-tm-select-line)
         (kill-region (region-beginning) (region-end)))
     (let*
-        ((end (save-excursion
+        ((end (save-excursion ; XXX refactor? see spiffy-tm-start-of-next-line
                 (move-end-of-line nil)
                 (spiffy-tm-safe-forward-char)
                 (point))))
       (kill-region (point-at-bol) end))))
+
+(defun spiffy-tm-duplicate-line ()
+  (interactive)
+  (let*
+      ((start (point-at-bol))
+       (end (spiffy-tm-start-of-next-line))
+       (text (buffer-substring start end)))
+    (move-end-of-line nil)
+    (spiffy-tm-safe-forward-char)
+    (insert text)
+    (goto-char end)))
 
 (defun spiffy-tm-comment-dwim ()
   "Comment/uncomment either the current line or the region."
@@ -409,9 +421,12 @@ The width of a tab-stop is determined by the variable tab-width."
 (defun spiffy-tm-region-or-line-end ()
   (if mark-active
       (region-end)
-    (if (= (point-at-eol) (point-max))
-        (point-at-eol)
-      (1+ (point-at-eol)))))
+    (spiffy-tm-start-of-next-line)))
+
+(defun spiffy-tm-start-of-next-line ()
+  (if (= (point-at-eol) (point-max))
+      (point-at-eol)
+    (1+ (point-at-eol))))
 
 ;;; Tie it all together
 (define-minor-mode spiffy-textmate-mode "Spiffy Textmate minor mode. There are many like it, but this one is spiffy."

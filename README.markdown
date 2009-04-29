@@ -51,6 +51,7 @@ Keybindings
 * __super-shift-left__: move left a word, considering underscore as a word constituent and select
 * __super-shift-right__: move right a word, considering underscore as a word constituent and select
 * __Textmate-style parens__: typing a left delimiter (that is, "(", "[", or "{") also inserts the right delimiter and leaves the point between them. Typing the right delimiter moves over the ), ], or } instead of inserting a new one. If the cursor is between an empty pair of balanced delimiters, typing backspace will eliminate both of them.
+* __control-D__: duplicate current line
 * __meta-F__: grep in project, where the project root is the directory with the .git directory in it
 * __control-K__: kill the current line
 * __meta-l__: Go to line *(overrides downcase-word)*

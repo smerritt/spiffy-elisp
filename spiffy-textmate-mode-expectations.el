@@ -403,6 +403,17 @@
       (spiffy-tm-kill-entire-line)
       (buffer-string)))
 
+  (desc "duplicate current line")
+  (expect "abcdef\nghijkl\nghijkl\n123456\n"
+    (with-gibberish-buffer
+     (call-interactively 'spiffy-tm-duplicate-line)
+     (buffer-string)))
+
+  (expect "ghijkl\n123456\n"
+    (with-gibberish-buffer
+     (call-interactively 'spiffy-tm-duplicate-line)
+     (buffer-substring (point) (point-max))))
+
   (desc "commenting stuff out")
   ; no region? comment the line you're on
   (expect "# class Foo\n  def foo?\n    true\n  end\nend\n"

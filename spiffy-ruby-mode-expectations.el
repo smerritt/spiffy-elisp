@@ -12,10 +12,16 @@
 (require 'el-expectations)
 (require 'spiffy-ruby-mode)
 
+(defvar ruby-file-buffer-filename nil "Filename of buffer used in with-ruby-file-buffer")
+(defun setup-ruby-file-buffer ()
+  (setq ruby-file-buffer-filename (make-temp-file "spiffy-ruby-mode-expectations"))
+  (setq shell-quoted-ruby-file-buffer-filename (shell-quote-argument ruby-file-buffer-filename)))
+(setup-ruby-file-buffer)
+
 (defmacro with-ruby-file-buffer (&rest body)
-  `(let ((tempfile (make-temp-file "spiffy-ruby-mode-expectations"))
-         retval)
-     (with-current-buffer (find-file-noselect tempfile)
+  `(let (retval)
+     (with-current-buffer (find-file-noselect ruby-file-buffer-filename)
+       (delete-region (point-min) (point-max))
        (ruby-mode)
        (spiffy-ruby-mode t)
        (setq retval (progn ,@body))
@@ -41,7 +47,7 @@
          ((file-exists-p "/somewhere/bin/spec") => t))
       (spiffy-ruby-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
 
-  (expect "spec"         ; file doesn't exist (Merb app sans bundled gems)
+  (expect "spec"     ; file doesn't exist (Merb app sans bundled gems)
     (mocklet
         (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => "/somewhere")
          ((file-exists-p "/somewhere/bin/spec") => nil))
@@ -70,26 +76,22 @@
       (spiffy-ruby-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
 
   (desc "run spec under point")
-  (expect "/tmp/"    ; runs in the merb root
+  (expect "/tmp/"                       ; runs in the merb root
     (flet ((compile (x &optional y) (spiffy-cwd))
            (spiffy-ruby-merb-root-for (x) "/tmp"))
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-under-point))))
 
-  (expect 0
-    (string-match
-     "spec -c -fs -l 1 /"
-     (flet ((compile (x &optional y) x))
-       (with-ruby-file-buffer
-        (call-interactively 'spiffy-ruby-run-spec-under-point)))))
+  (expect (concat "spec -c -fs -l 1 " shell-quoted-ruby-file-buffer-filename)
+    (flet ((compile (x &optional y) x))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-spec-under-point))))
 
-  (expect 0
-    (string-match
-     "spec -c -fs -l 1 /"
-     (flet ((compile (x &optional y) x))
-       (with-ruby-file-buffer
-        (call-interactively 'spiffy-ruby-run-spec-under-point)
-        spiffy-ruby-last-test-command))))
+  (expect (concat "spec -c -fs -l 1 " shell-quoted-ruby-file-buffer-filename)
+    (flet ((compile (x &optional y) x))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-spec-under-point)
+       spiffy-ruby-last-test-command)))
 
   (expect "/usr/bin"
     (flet ((compile (x &optional y) x)
@@ -99,26 +101,22 @@
        spiffy-ruby-last-test-dir)))
 
   (desc "run spec file")
-  (expect "/tmp/"                     ; runs in the merb root
+  (expect "/tmp/"                       ; runs in the merb root
     (flet ((compile (x &optional y) (spiffy-cwd))
            (spiffy-ruby-merb-root-for (x) "/tmp"))
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-file))))
 
-  (expect 0
-    (string-match
-     "spec -c -fs /"
-     (flet ((compile (x &optional y) x))
-       (with-ruby-file-buffer
-        (call-interactively 'spiffy-ruby-run-spec-file)))))
+  (expect (concat "spec -c -fs " shell-quoted-ruby-file-buffer-filename)
+    (flet ((compile (x &optional y) x))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-spec-file))))
 
-  (expect 0
-    (string-match
-     "spec -c -fs /"
-     (flet ((compile (x &optional y) x))
-       (with-ruby-file-buffer
-        (call-interactively 'spiffy-ruby-run-spec-file)
-        spiffy-ruby-last-test-command))))
+  (expect (concat "spec -c -fs " shell-quoted-ruby-file-buffer-filename)
+    (flet ((compile (x &optional y) x))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-spec-file)
+       spiffy-ruby-last-test-command)))
 
   (expect "/usr/bin"
     (flet ((compile (x &optional y) x)
@@ -138,22 +136,22 @@
   (expect "/tmp/"                       ; runs in the merb root
     (flet ((rdebug (&optional args) (spiffy-cwd))
            (spiffy-ruby-merb-root-for (x) "/tmp")
-           ; flet + interactive don't play well together
+                                        ; flet + interactive don't play well together
            (call-interactively (x) (funcall x)))
       (with-ruby-file-buffer
-       ; no point w/call-interactively since it's nerfed
+                                        ; no point w/call-interactively since it's nerfed
        (spiffy-ruby-rdebug))))
 
-  (expect "/tmp/bin/rdebug --emacs 3"   ; uses the merb-relative rdebug
+  (expect "/tmp/bin/rdebug --emacs 3"  ; uses the merb-relative rdebug
     (let ((gud-rdebug-command-name "rdebug --emacs 3"))
       (flet ((rdebug (&optional args) gud-rdebug-command-name)
              (spiffy-ruby-merb-root-for (x) "/tmp")
              (call-interactively (x) (funcall x))
              (spiffy-ruby-rdebug-binary-to-run-for (x) "/tmp/bin/rdebug"))
-          (with-ruby-file-buffer
-           (spiffy-ruby-rdebug)))))
+        (with-ruby-file-buffer
+         (spiffy-ruby-rdebug)))))
 
-  (expect "original-rdebug"             ; don't screw with the original value
+  (expect "original-rdebug"      ; don't screw with the original value
     (let ((gud-rdebug-command-name "original-rdebug"))
       (flet ((rdebug (&optional args) t)
              (spiffy-ruby-merb-root-for (x) "/tmp")
@@ -183,12 +181,10 @@
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-syntax-check))))
 
-  (expect 0
-    (string-match
-     "ruby -c /"     ; we don't actually know the file name here
-     (flet ((compile (command &optional dontcare) command))
-       (with-ruby-file-buffer
-        (call-interactively 'spiffy-ruby-syntax-check)))))
+  (expect (concat "ruby -c " shell-quoted-ruby-file-buffer-filename)
+    (flet ((compile (command &optional dontcare) command))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-syntax-check))))
 
   (desc "switch between spec + implementation")
   (expect "app/models/bottle.rb"

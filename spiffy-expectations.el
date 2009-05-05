@@ -139,4 +139,15 @@
      (with-temp-buffer
        (call-interactively 'spiffy-insert-random-ip)
        (buffer-string))))
+
+  (desc "spiffy-buffer-or-temp-file-name")
+  (expect "/tmp/a-test-file"
+    (with-current-buffer (find-file-noselect "/tmp/a-test-file")
+      (spiffy-buffer-or-temp-file-name)))
+
+  (expect "file-contents"
+    (with-temp-buffer
+      (insert "file-contents")
+      (with-current-buffer (find-file-noselect (spiffy-buffer-or-temp-file-name))
+        (buffer-string))))
 )

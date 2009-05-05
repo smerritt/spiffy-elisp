@@ -95,7 +95,7 @@
   (interactive)
   (let ((compilation-buffer-name-function (lambda (x) "*syntax check*")))
     (compile
-     (spiffy-make-shell-command "ruby" "-c" (buffer-file-name)))))
+     (spiffy-make-shell-command "ruby" "-c" (spiffy-buffer-or-temp-file-name)))))
 
 (defun spiffy-ruby-is-merb-root (dir)
   (file-exists-p (concat (file-name-as-directory dir) "config/init.rb")))

@@ -186,6 +186,17 @@
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-syntax-check))))
 
+  (expect "x = Struct.new(:a => 1, :b => 2"
+    (with-current-buffer
+        (find-file-noselect
+         (substring
+          (flet ((compile (command &optional dontcare) command))
+            (with-temp-buffer
+              (insert "x = Struct.new(:a => 1, :b => 2")
+              (spiffy-ruby-syntax-check)))
+          8))
+      (buffer-string)))
+
   (desc "switch between spec + implementation")
   (expect "app/models/bottle.rb"
     (spiffy-ruby-corresponding-filename "spec/models/bottle_spec.rb"))

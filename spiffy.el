@@ -69,6 +69,16 @@
    ""
    filename))
 
+(defun spiffy-buffer-or-temp-file-name ()
+  (or (buffer-file-name)
+      ; XXX use file-local-copy
+      (let ((tempfile (make-temp-file "/tmp/spiffy"))
+            (buffer-contents (buffer-string)))
+        (with-current-buffer (find-file-noselect tempfile)
+          (insert buffer-contents)
+          (save-buffer 0)               ; no backup file for my temp file, thanks
+          (buffer-file-name)))))
+
 (defun spiffy-start-or-finish-keyboard-macro ()
   (interactive)
   (if defining-kbd-macro

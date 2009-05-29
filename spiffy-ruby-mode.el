@@ -46,11 +46,18 @@
    (compile
     (setq
      spiffy-ruby-last-test-command
-     (apply
-      'spiffy-make-shell-command
-      (cons
-       (spiffy-ruby-spec-binary-to-run-for (buffer-file-name))
-       (append spec-args (list specfile))))))))
+     (spiffy-ruby-test-command specfile spec-args)))))
+
+(defun spiffy-ruby-test-command (specfile spec-args)
+  (apply
+   'spiffy-make-shell-command
+   (cons
+    (spiffy-ruby-spec-binary-to-run-for (buffer-file-name))
+    (append spec-args (list specfile)))))
+
+(defun spiffy-ruby-debug-spec-under-point ()
+  (interactive)
+  "writeme")
 
 ;; XXX make these rings so that we can have the last N tests run
 ;;   (1 <= N <= 5, probably).

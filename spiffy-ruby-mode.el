@@ -25,6 +25,7 @@
 (spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(meta R)] 'spiffy-ruby-run-spec-under-point)
 (spiffy-ruby-define-key [(control ?\;) ?s ?c] 'spiffy-ruby-syntax-check)
+(spiffy-ruby-define-key [(control ?\;) ?r ?f] 'spiffy-ruby-run-file)
 
 (defun spiffy-ruby-run-spec-under-point ()
   (interactive)
@@ -91,6 +92,11 @@
   (let ((compilation-buffer-name-function (lambda (x) "*syntax check*")))
     (compile
      (spiffy-make-shell-command "ruby" "-c" (spiffy-buffer-or-temp-file-name)))))
+
+(defun spiffy-ruby-run-file ()
+  (interactive)
+  (compile
+   (spiffy-make-shell-command "ruby" (spiffy-buffer-or-temp-file-name))))
 
 (defun spiffy-ruby-is-merb-root (dir)
   (file-exists-p (concat (file-name-as-directory dir) "config/init.rb")))

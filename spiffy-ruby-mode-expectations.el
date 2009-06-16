@@ -75,7 +75,13 @@
     (flet ((file-exists-p (file) (equal file "/my/project/config/init.rb")))
       (spiffy-ruby-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
 
-  (desc "run spec under point")
+  (desc "run file")
+  (expect (concat "ruby " shell-quoted-ruby-file-buffer-filename)
+    (flet ((compile (x &optional y) x))
+      (with-ruby-file-buffer
+       (call-interactively 'spiffy-ruby-run-file))))
+
+(desc "run spec under point")
   (expect "/tmp/"                       ; runs in the merb root
     (flet ((compile (x &optional y) (spiffy-cwd))
            (spiffy-ruby-merb-root-for (x) "/tmp"))

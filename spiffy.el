@@ -141,6 +141,6 @@ To use, (setq spiffy-enable-minor-mode t) before requiring 'spiffy.")
 
 (define-minor-mode spiffy-mode
   "Spiffy minor mode. Stuff that's generally useful when coding."
-  t
+  spiffy-enable-minor-mode
   " s"
   *spiffy-keymap*)

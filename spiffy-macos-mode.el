@@ -34,6 +34,6 @@
 ;; Tie it all together
 (define-minor-mode spiffy-macos-mode
   "Tiny MacOS minor mode. Makes a couple keys work like you'd expect."
-  t
+  nil
   " Mac"
   *spiffy-macos-keymap*)

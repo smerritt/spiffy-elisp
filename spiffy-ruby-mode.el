@@ -20,6 +20,7 @@
 (spiffy-ruby-define-key [(control f9)] 'spiffy-ruby-rdebug)
 (spiffy-ruby-define-key [(control f10)] 'spiffy-ruby-run-spec-file)
 (spiffy-ruby-define-key [(control shift f10)] 'spiffy-ruby-run-spec-under-point)
+(spiffy-ruby-define-key [(control ?\;) ?m ?i] 'spiffy-ruby-inf-merb)
 (spiffy-ruby-define-key [(control ?\;) ?s ?b] 'spiffy-ruby-switch-code-and-test-buffer)
 (spiffy-ruby-define-key [(control ?\;) ?r ?t] 'spiffy-ruby-rerun-last-test)
 (spiffy-ruby-define-key [(meta r)] 'spiffy-ruby-run-spec-file)
@@ -115,6 +116,9 @@
 (defun spiffy-ruby-rdebug-binary-to-run-for (filename)
   (spiffy-ruby-maybe-merbified-binary filename "rdebug" "bin"))
 
+(defun spiffy-ruby-merb-binary-to-run-for (filename)
+  (spiffy-ruby-maybe-merbified-binary filename "merb" "bin"))
+
 (defun spiffy-ruby-maybe-merbified-binary (filename program relative-path)
   (let ((merb-root (spiffy-ruby-merb-root-for filename)))
     (if merb-root
@@ -124,6 +128,15 @@
                                     (list merb-root relative-path program))))
             (or (and (file-exists-p merbified-program) merbified-program) program)))
       program)))             ; whatever the system's one is (hope it has one)
+
+(defun spiffy-ruby-inf-merb ()
+  (interactive)
+  (spiffy-run-in-directory (spiffy-ruby-merb-root-for (buffer-file-name))
+                           (make-comint "merb -i"
+                                        (spiffy-ruby-merb-binary-to-run-for (buffer-file-name))
+                                        nil
+                                        "-i"))
+  (switch-to-buffer-other-window "*merb -i*"))
 
 ;; XXX test me
 (defun spiffy-ruby-switch-code-and-test-buffer ()

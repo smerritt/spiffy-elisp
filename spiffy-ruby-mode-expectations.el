@@ -58,6 +58,19 @@
         (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => nil))
       (spiffy-ruby-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
 
+  (desc "spiffy-ruby-merb-binary-to-run-for")
+  (expect "/somewhere/bin/merb"
+    (mocklet
+        (((spiffy-ruby-merb-root-for "/somewhere/merb/foo.rb") => "/somewhere")
+         ((file-exists-p "/somewhere/bin/merb") => t))
+      (spiffy-ruby-merb-binary-to-run-for "/somewhere/merb/foo.rb")))
+
+  (expect "merb"
+    (mocklet
+        (((spiffy-ruby-merb-root-for "/somewhere/merb/foo.rb") => nil))
+      (spiffy-ruby-merb-binary-to-run-for "/somewhere/merb/foo.rb")))
+
+
   (desc "spiffy-ruby-rdebug-binary-to-run-for")
   (expect "/somewhere/bin/rdebug"
     (mocklet
@@ -81,7 +94,7 @@
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-file))))
 
-(desc "run spec under point")
+  (desc "run spec under point")
   (expect "/tmp/"                       ; runs in the merb root
     (flet ((compile (x &optional y) (spiffy-cwd))
            (spiffy-ruby-merb-root-for (x) "/tmp"))
@@ -105,6 +118,55 @@
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-under-point)
        spiffy-ruby-last-test-dir)))
+
+  (desc "run interactive merb")
+  (expect "bin/merb"
+    (flet ((make-comint (buffername program &optional startfile &rest args)
+                        (setq _spiffy-ruby-test-run-interactive-merb-program program))
+           (spiffy-ruby-merb-binary-to-run-for (_)
+                                               "bin/merb")
+           ;; these last two are just to stop the test from screwing
+           ;; up the emacs it's run in
+           (switch-to-buffer-other-window (_)
+                                          nil)
+           (other-window (_)
+                         nil))
+      (progn
+        (setq _spiffy-ruby-test-run-interactive-merb-program "didn't even run make-comint")
+        (spiffy-ruby-inf-merb)
+        _spiffy-ruby-test-run-interactive-merb-program)))
+
+  (expect '("-i")
+    (flet ((make-comint (buffername program &optional startfile &rest args)
+                        (setq _spiffy-ruby-test-run-interactive-merb-args args))
+           (spiffy-ruby-merb-binary-to-run-for (_)
+                                               "bin/merb")
+           ;; these last two are just to stop the test from screwing
+           ;; up the emacs it's run in
+           (switch-to-buffer-other-window (_)
+                                          nil)
+           (other-window (_)
+                         nil))
+      (progn
+        (setq _spiffy-ruby-test-run-interactive-merb-args "didn't even run make-comint")
+        (spiffy-ruby-inf-merb)
+        _spiffy-ruby-test-run-interactive-merb-args)))
+
+  (expect "/usr/bin/"
+    (flet ((make-comint (buffername program &optional startfile &rest args)
+                        (setq _spiffy-ruby-test-run-interactive-merb-dir (spiffy-cwd)))
+           (spiffy-ruby-merb-root-for (_)
+                                      "/usr/bin/")
+           ;; these last two are just to stop the test from screwing
+           ;; up the emacs it's run in
+           (switch-to-buffer-other-window (_)
+                                          nil)
+           (other-window (_)
+                         nil))
+      (progn
+        (setq _spiffy-ruby-test-run-interactive-merb-dir "didn't get set")
+        (spiffy-ruby-inf-merb)
+        _spiffy-ruby-test-run-interactive-merb-dir)))
 
   (desc "run spec file")
   (expect "/tmp/"                       ; runs in the merb root

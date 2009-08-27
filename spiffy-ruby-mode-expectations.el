@@ -125,12 +125,10 @@
                         (setq _spiffy-ruby-test-run-interactive-merb-program program))
            (spiffy-ruby-merb-binary-to-run-for (_)
                                                "bin/merb")
-           ;; these last two are just to stop the test from screwing
+           ;; this is just to stop the test from screwing
            ;; up the emacs it's run in
            (switch-to-buffer-other-window (_)
-                                          nil)
-           (other-window (_)
-                         nil))
+                                          nil))
       (progn
         (setq _spiffy-ruby-test-run-interactive-merb-program "didn't even run make-comint")
         (spiffy-ruby-inf-merb)
@@ -141,12 +139,10 @@
                         (setq _spiffy-ruby-test-run-interactive-merb-args args))
            (spiffy-ruby-merb-binary-to-run-for (_)
                                                "bin/merb")
-           ;; these last two are just to stop the test from screwing
+           ;; this is just to stop the test from screwing
            ;; up the emacs it's run in
            (switch-to-buffer-other-window (_)
-                                          nil)
-           (other-window (_)
-                         nil))
+                                          nil))
       (progn
         (setq _spiffy-ruby-test-run-interactive-merb-args "didn't even run make-comint")
         (spiffy-ruby-inf-merb)
@@ -157,12 +153,10 @@
                         (setq _spiffy-ruby-test-run-interactive-merb-dir (spiffy-cwd)))
            (spiffy-ruby-merb-root-for (_)
                                       "/usr/bin/")
-           ;; these last two are just to stop the test from screwing
+           ;; this is just to stop the test from screwing
            ;; up the emacs it's run in
            (switch-to-buffer-other-window (_)
-                                          nil)
-           (other-window (_)
-                         nil))
+                                          nil))
       (progn
         (setq _spiffy-ruby-test-run-interactive-merb-dir "didn't get set")
         (spiffy-ruby-inf-merb)

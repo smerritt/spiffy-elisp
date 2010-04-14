@@ -29,64 +29,19 @@
        retval)))
 
 (expectations
-  (desc "spiffy-ruby-is-merb-root")
-  (expect t
-    (mocklet
-        (((file-exists-p "/path/to/somewhere/config/init.rb") => t))
-      (spiffy-ruby-is-merb-root "/path/to/somewhere/")))
+  (desc "spiffy-ruby-maybe-bundled-command")
+  (expect "bundle exec spec"
+    (flet ((file-exists-p (path)
+                          (equal path "/somewhere/.bundle")))
+      (spiffy-ruby-maybe-bundled-command "/somewhere/spec/foo.rb" "spec")))
 
-  (expect nil
-    (mocklet
-        (((file-exists-p "/path/to/somewhere/config/init.rb") => nil))
-      (spiffy-ruby-is-merb-root "/path/to/somewhere/")))
+  (expect "spec"     ; file doesn't exist (no bundled gems)
+    (spiffy-ruby-maybe-bundled-command "/somewhere/spec/foo.rb" "spec"))
 
-  (desc "spiffy-ruby-spec-binary-to-run-for")
-  (expect "/somewhere/bin/spec"
-    (mocklet
-        (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => "/somewhere")
-         ((file-exists-p "/somewhere/bin/spec") => t))
-      (spiffy-ruby-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
-
-  (expect "spec"     ; file doesn't exist (Merb app sans bundled gems)
-    (mocklet
-        (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => "/somewhere")
-         ((file-exists-p "/somewhere/bin/spec") => nil))
-      (spiffy-ruby-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
-
-  (expect "spec"
-    (mocklet
-        (((spiffy-ruby-merb-root-for "/somewhere/spec/foo.rb") => nil))
-      (spiffy-ruby-spec-binary-to-run-for "/somewhere/spec/foo.rb")))
-
-  (desc "spiffy-ruby-merb-binary-to-run-for")
-  (expect "/somewhere/bin/merb"
-    (mocklet
-        (((spiffy-ruby-merb-root-for "/somewhere/merb/foo.rb") => "/somewhere")
-         ((file-exists-p "/somewhere/bin/merb") => t))
-      (spiffy-ruby-merb-binary-to-run-for "/somewhere/merb/foo.rb")))
-
-  (expect "merb"
-    (mocklet
-        (((spiffy-ruby-merb-root-for "/somewhere/merb/foo.rb") => nil))
-      (spiffy-ruby-merb-binary-to-run-for "/somewhere/merb/foo.rb")))
-
-
-  (desc "spiffy-ruby-rdebug-binary-to-run-for")
-  (expect "/somewhere/bin/rdebug"
-    (mocklet
-        (((spiffy-ruby-merb-root-for "/somewhere/rdebug/foo.rb") => "/somewhere")
-         ((file-exists-p "/somewhere/bin/rdebug") => t))
-      (spiffy-ruby-rdebug-binary-to-run-for "/somewhere/rdebug/foo.rb")))
-
-  (expect "rdebug"
-    (mocklet
-        (((spiffy-ruby-merb-root-for "/somewhere/rdebug/foo.rb") => nil))
-      (spiffy-ruby-rdebug-binary-to-run-for "/somewhere/rdebug/foo.rb")))
-
-  (desc "spiffy-ruby-merb-root-for")
+  (desc "spiffy-ruby-bundle-root-for")
   (expect "/my/project/"
-    (flet ((file-exists-p (file) (equal file "/my/project/config/init.rb")))
-      (spiffy-ruby-merb-root-for "/my/project/spec/models/foobar_spec.rb")))
+    (flet ((file-exists-p (file) (equal file "/my/project/.bundle")))
+      (spiffy-ruby-bundle-root-for "/my/project/spec/models/foobar_spec.rb")))
 
   (desc "run file")
   (expect (concat "ruby " shell-quoted-ruby-file-buffer-filename)
@@ -97,7 +52,7 @@
   (desc "run spec under point")
   (expect "/tmp/"                       ; runs in the merb root
     (flet ((compile (x &optional y) (spiffy-cwd))
-           (spiffy-ruby-merb-root-for (x) "/tmp"))
+           (spiffy-ruby-bundle-root-for (x) "/tmp"))
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-under-point))))
 
@@ -114,17 +69,15 @@
 
   (expect "/usr/bin"
     (flet ((compile (x &optional y) x)
-           (spiffy-ruby-merb-root-for (x) "/usr/bin"))
+           (spiffy-ruby-bundle-root-for (x) "/usr/bin"))
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-under-point)
        spiffy-ruby-last-test-dir)))
 
   (desc "run interactive merb")
-  (expect "bin/merb"
+  (expect "bundle exec merb"
     (flet ((make-comint (buffername program &optional startfile &rest args)
                         (setq _spiffy-ruby-test-run-interactive-merb-program program))
-           (spiffy-ruby-merb-binary-to-run-for (_)
-                                               "bin/merb")
            ;; this is just to stop the test from screwing
            ;; up the emacs it's run in
            (switch-to-buffer-other-window (_)
@@ -137,8 +90,6 @@
   (expect '("-i")
     (flet ((make-comint (buffername program &optional startfile &rest args)
                         (setq _spiffy-ruby-test-run-interactive-merb-args args))
-           (spiffy-ruby-merb-binary-to-run-for (_)
-                                               "bin/merb")
            ;; this is just to stop the test from screwing
            ;; up the emacs it's run in
            (switch-to-buffer-other-window (_)
@@ -151,7 +102,7 @@
   (expect "/usr/bin/"
     (flet ((make-comint (buffername program &optional startfile &rest args)
                         (setq _spiffy-ruby-test-run-interactive-merb-dir (spiffy-cwd)))
-           (spiffy-ruby-merb-root-for (_)
+           (spiffy-ruby-bundle-root-for (_)
                                       "/usr/bin/")
            ;; this is just to stop the test from screwing
            ;; up the emacs it's run in
@@ -165,7 +116,7 @@
   (desc "run spec file")
   (expect "/tmp/"                       ; runs in the merb root
     (flet ((compile (x &optional y) (spiffy-cwd))
-           (spiffy-ruby-merb-root-for (x) "/tmp"))
+           (spiffy-ruby-bundle-root-for (x) "/tmp"))
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-file))))
 
@@ -182,7 +133,7 @@
 
   (expect "/usr/bin"
     (flet ((compile (x &optional y) x)
-           (spiffy-ruby-merb-root-for (x) "/usr/bin"))
+           (spiffy-ruby-bundle-root-for (x) "/usr/bin"))
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-under-point)
        spiffy-ruby-last-test-dir)))
@@ -197,26 +148,25 @@
   (desc "invoking rdebug")
   (expect "/tmp/"                       ; runs in the merb root
     (flet ((rdebug (&optional args) (spiffy-cwd))
-           (spiffy-ruby-merb-root-for (x) "/tmp")
+           (spiffy-ruby-bundle-root-for (x) "/tmp")
                                         ; flet + interactive don't play well together
            (call-interactively (x) (funcall x)))
       (with-ruby-file-buffer
                                         ; no point w/call-interactively since it's nerfed
        (spiffy-ruby-rdebug))))
 
-  (expect "/tmp/bin/rdebug --emacs 3"  ; uses the merb-relative rdebug
+  (expect "bundle exec rdebug --emacs 3"  ; uses the bundled rdebug
     (let ((gud-rdebug-command-name "rdebug --emacs 3"))
       (flet ((rdebug (&optional args) gud-rdebug-command-name)
-             (spiffy-ruby-merb-root-for (x) "/tmp")
-             (call-interactively (x) (funcall x))
-             (spiffy-ruby-rdebug-binary-to-run-for (x) "/tmp/bin/rdebug"))
+             (spiffy-ruby-bundle-root-for (x) "/tmp")
+             (call-interactively (x) (funcall x)))
         (with-ruby-file-buffer
          (spiffy-ruby-rdebug)))))
 
   (expect "original-rdebug"      ; don't screw with the original value
     (let ((gud-rdebug-command-name "original-rdebug"))
       (flet ((rdebug (&optional args) t)
-             (spiffy-ruby-merb-root-for (x) "/tmp")
+             (spiffy-ruby-bundle-root-for (x) "/tmp")
              (call-interactively (x) (funcall x)))
         (with-ruby-file-buffer
          (spiffy-ruby-rdebug))

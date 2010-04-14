@@ -44,15 +44,15 @@
 (defun spiffy-ruby-run-spec (specfile &rest spec-args)
   (save-buffer)
   (spiffy-run-in-directory
-   (setq spiffy-ruby-last-test-dir (spiffy-ruby-merb-root-for specfile))
-   (compile
-    (setq
-     spiffy-ruby-last-test-command
-     (apply
-      'spiffy-make-shell-command
-      (cons
-       (spiffy-ruby-spec-binary-to-run-for (buffer-file-name))
-       (append spec-args (list specfile))))))))
+   (setq spiffy-ruby-last-test-dir (spiffy-ruby-bundle-root-for specfile))
+   (compile (setq spiffy-ruby-last-test-command
+                  ;; don't shell-escape "bundle exec spec"; it doesn't help
+                  (concat (spiffy-ruby-maybe-bundled-command (buffer-file-name)
+                                                              "spec")
+                          " "
+                          (apply 'spiffy-make-shell-command
+                                 (append spec-args (list specfile))))))))
+
 
 ;; XXX make these rings so that we can have the last N tests run
 ;;   (1 <= N <= 5, probably).
@@ -67,11 +67,11 @@
 
 (defun spiffy-ruby-rdebug ()
   (interactive)
-  (let ((root (spiffy-ruby-merb-root-for (buffer-file-name)))
-        (rdebug-binary (spiffy-ruby-rdebug-binary-to-run-for (buffer-file-name))))
+  (let ((root (spiffy-ruby-bundle-root-for (buffer-file-name)))
+        (rdebug-command (spiffy-ruby-maybe-bundled-command (buffer-file-name) "rdebug")))
     (spiffy-run-in-directory
      root
-     (let ((gud-rdebug-command-name (concat rdebug-binary " --emacs 3")))
+     (let ((gud-rdebug-command-name (concat rdebug-command " --emacs 3")))
        ;; so, rdebug unconditionally strips the directory part off the script
        ;; to debug. unfortunately, since we have to run from the merb root,
        ;; stripping that name off makes this not work.
@@ -99,41 +99,20 @@
   (compile
    (spiffy-make-shell-command "ruby" (spiffy-buffer-or-temp-file-name))))
 
-(defun spiffy-ruby-is-merb-root (dir)
-  (file-exists-p (concat (file-name-as-directory dir) "config/init.rb")))
+(defun spiffy-ruby-bundle-root-for (filename)
+  (locate-dominating-file filename ".bundle"))
 
-(defun spiffy-ruby-merb-root-for (filename)
-  (let ((as-dir (file-name-as-directory filename)))
-    (if (string= (file-truename as-dir) (file-truename (spiffy-parent-directory as-dir)))
-        nil                             ; base case
-      (if (spiffy-ruby-is-merb-root as-dir)
-          as-dir
-        (spiffy-ruby-merb-root-for (spiffy-parent-directory filename))))))
-
-(defun spiffy-ruby-spec-binary-to-run-for (filename)
-  (spiffy-ruby-maybe-merbified-binary filename "spec" "bin"))
-
-(defun spiffy-ruby-rdebug-binary-to-run-for (filename)
-  (spiffy-ruby-maybe-merbified-binary filename "rdebug" "bin"))
-
-(defun spiffy-ruby-merb-binary-to-run-for (filename)
-  (spiffy-ruby-maybe-merbified-binary filename "merb" "bin"))
-
-(defun spiffy-ruby-maybe-merbified-binary (filename program relative-path)
-  (let ((merb-root (spiffy-ruby-merb-root-for filename)))
-    (if merb-root
-        (progn
-          (let ((merbified-program (reduce
-                                    (lambda (full partial) (concat (file-name-as-directory full) partial))
-                                    (list merb-root relative-path program))))
-            (or (and (file-exists-p merbified-program) merbified-program) program)))
-      program)))             ; whatever the system's one is (hope it has one)
+(defun spiffy-ruby-maybe-bundled-command (filename program)
+  (let ((bundle-root (spiffy-ruby-bundle-root-for filename)))
+    (if bundle-root
+        (concat "bundle exec " program)
+      program)))
 
 (defun spiffy-ruby-inf-merb ()
   (interactive)
-  (spiffy-run-in-directory (spiffy-ruby-merb-root-for (buffer-file-name))
+  (spiffy-run-in-directory (spiffy-ruby-bundle-root-for (buffer-file-name))
                            (make-comint "merb -i"
-                                        (spiffy-ruby-merb-binary-to-run-for (buffer-file-name))
+                                        (spiffy-ruby-maybe-bundled-command (buffer-file-name) "merb")
                                         nil
                                         "-i"))
   (switch-to-buffer-other-window "*merb -i*"))
@@ -141,11 +120,11 @@
 ;; XXX test me
 (defun spiffy-ruby-switch-code-and-test-buffer ()
   (interactive)
-  (let* ((merb-root (spiffy-ruby-merb-root-for (buffer-file-name)))
+  (let* ((bundle-root (spiffy-ruby-bundle-root-for (buffer-file-name)))
          (other-file (concat
-                      (file-name-as-directory merb-root)
+                      (file-name-as-directory bundle-root)
                       (spiffy-ruby-corresponding-filename
-                       (spiffy-path-relative-to merb-root (buffer-file-name))))))
+                       (spiffy-path-relative-to bundle-root (buffer-file-name))))))
     (if (and other-file (not (string= other-file (buffer-file-name))))
         (if (file-exists-p other-file)
             (find-file other-file)

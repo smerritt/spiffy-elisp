@@ -32,7 +32,7 @@
   (desc "spiffy-ruby-maybe-bundled-command")
   (expect "bundle exec spec"
     (flet ((file-exists-p (path)
-                          (equal path "/somewhere/.bundle")))
+                          (equal path "/somewhere/Gemfile")))
       (spiffy-ruby-maybe-bundled-command "/somewhere/spec/foo.rb" "spec")))
 
   (expect "spec"     ; file doesn't exist (no bundled gems)
@@ -40,7 +40,7 @@
 
   (desc "spiffy-ruby-bundle-root-for")
   (expect "/my/project/"
-    (flet ((file-exists-p (file) (equal file "/my/project/.bundle")))
+    (flet ((file-exists-p (file) (equal file "/my/project/Gemfile")))
       (spiffy-ruby-bundle-root-for "/my/project/spec/models/foobar_spec.rb")))
 
   (desc "run file")
@@ -81,7 +81,10 @@
            ;; this is just to stop the test from screwing
            ;; up the emacs it's run in
            (switch-to-buffer-other-window (_)
-                                          nil))
+                                          nil)
+           (file-exists-p (file)
+                          (equal (expand-file-name (concat (spiffy-cwd) "Gemfile"))
+                                 (expand-file-name file))))
       (progn
         (setq _spiffy-ruby-test-run-interactive-merb-program "didn't even run make-comint")
         (spiffy-ruby-inf-merb)

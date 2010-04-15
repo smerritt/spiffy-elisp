@@ -100,7 +100,7 @@
    (spiffy-make-shell-command "ruby" (spiffy-buffer-or-temp-file-name))))
 
 (defun spiffy-ruby-bundle-root-for (filename)
-  (let ((root (locate-dominating-file filename ".bundle")))
+  (let ((root (locate-dominating-file filename "Gemfile")))
     (if root
         (expand-file-name root)
       root)))

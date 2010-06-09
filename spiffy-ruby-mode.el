@@ -34,6 +34,7 @@
    (buffer-file-name)
    "-c"
    "-fs"
+   "--backtrace"
    "-l"
    (format "%d" (line-number-at-pos)))) ; defaults to line number at point
 

@@ -56,12 +56,12 @@
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-under-point))))
 
-  (expect (concat "spec -c -fs -l 1 " shell-quoted-ruby-file-buffer-filename)
+  (expect (concat "spec -c -fs --backtrace -l 1 " shell-quoted-ruby-file-buffer-filename)
     (flet ((compile (x &optional y) x))
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-under-point))))
 
-  (expect (concat "spec -c -fs -l 1 " shell-quoted-ruby-file-buffer-filename)
+  (expect (concat "spec -c -fs --backtrace -l 1 " shell-quoted-ruby-file-buffer-filename)
     (flet ((compile (x &optional y) x))
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-run-spec-under-point)
@@ -201,7 +201,7 @@
       (with-ruby-file-buffer
        (call-interactively 'spiffy-ruby-syntax-check))))
 
-  (expect "x = Struct.new(:a => 1, :b => 2"
+  (expect "x = Struct.new(:a => 1, :b => 2\n"
     (with-current-buffer
         (find-file-noselect
          (substring

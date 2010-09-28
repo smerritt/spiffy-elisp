@@ -28,10 +28,16 @@
 (spiffy-ruby-define-key [(control ?\;) ?s ?c] 'spiffy-ruby-syntax-check)
 (spiffy-ruby-define-key [(control ?\;) ?r ?f] 'spiffy-ruby-run-file)
 
+(defun spiffy-local-file-name ()
+  (if (and (boundp 'tramp-file-name-regexp)
+           (eq (string-match tramp-file-name-regexp (buffer-file-name)) 0))
+      (tramp-file-name-localname (tramp-dissect-file-name (buffer-file-name)))
+    (buffer-file-name)))
+
 (defun spiffy-ruby-run-spec-under-point ()
   (interactive)
   (spiffy-ruby-run-spec
-   (buffer-file-name)
+   (spiffy-local-file-name)
    "-c"
    "-fs"
    "--backtrace"
@@ -40,7 +46,7 @@
 
 (defun spiffy-ruby-run-spec-file ()
   (interactive)
-  (spiffy-ruby-run-spec (buffer-file-name) "-c" "-fs"))
+  (spiffy-ruby-run-spec (spiffy-local-file-name) "-c" "-fs"))
 
 (defun spiffy-ruby-run-spec (specfile &rest spec-args)
   (save-buffer)

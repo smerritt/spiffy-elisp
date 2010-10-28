@@ -55,10 +55,9 @@
    (compile (setq spiffy-ruby-last-test-command
                   ;; don't shell-escape "bundle exec spec"; it doesn't help
                   (concat (spiffy-ruby-maybe-bundled-command (buffer-file-name)
-                                                              "spec")
-                          " "
-                          (apply 'spiffy-make-shell-command
-                                 (append spec-args (list specfile))))))))
+                                                              "spec"
+                                                              (apply 'spiffy-make-shell-command
+                                                                     (append spec-args (list specfile)))))))))
 
 
 ;; XXX make these rings so that we can have the last N tests run
@@ -75,10 +74,10 @@
 (defun spiffy-ruby-rdebug ()
   (interactive)
   (let ((root (spiffy-ruby-bundle-root-for (buffer-file-name)))
-        (rdebug-command (spiffy-ruby-maybe-bundled-command (buffer-file-name) "rdebug")))
+        (rdebug-command (spiffy-ruby-maybe-bundled-command (buffer-file-name) "rdebug" "--emacs 3")))
     (spiffy-run-in-directory
      root
-     (let ((gud-rdebug-command-name (concat rdebug-command " --emacs 3")))
+     (let ((gud-rdebug-command-name rdebug-command))
        ;; so, rdebug unconditionally strips the directory part off the script
        ;; to debug. unfortunately, since we have to run from the merb root,
        ;; stripping that name off makes this not work.
@@ -112,11 +111,20 @@
         (expand-file-name root)
       root)))
 
-(defun spiffy-ruby-maybe-bundled-command (filename program)
-  (let ((bundle-root (spiffy-ruby-bundle-root-for filename)))
+(defun spiffy-ruby-maybe-bundled-command (filename program &optional args)
+  (let ((bundle-root (spiffy-ruby-bundle-root-for filename))
+        (space-and-args (if args
+                            (concat " " args)
+                          "")))
     (if bundle-root
-        (concat "bundle exec " program)
-      program)))
+        (concat "bash -l -c 'cd "
+                bundle-root
+                " && bundle exec "
+                program
+                space-and-args
+                "'")
+      (concat program
+              space-and-args))))
 
 (defun spiffy-ruby-inf-merb ()
   (interactive)

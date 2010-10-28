@@ -30,10 +30,15 @@
 
 (expectations
   (desc "spiffy-ruby-maybe-bundled-command")
-  (expect "bundle exec spec"
+  (expect "bash -l -c 'cd /somewhere/ && bundle exec spec'"
     (flet ((file-exists-p (path)
                           (equal path "/somewhere/Gemfile")))
       (spiffy-ruby-maybe-bundled-command "/somewhere/spec/foo.rb" "spec")))
+
+  (expect "bash -l -c 'cd /somewhere/ && bundle exec spec -cfs spec/foo_spec.rb'"
+    (flet ((file-exists-p (path)
+                          (equal path "/somewhere/Gemfile")))
+      (spiffy-ruby-maybe-bundled-command "/somewhere/spec/foo.rb" "spec" "-cfs spec/foo_spec.rb")))
 
   (expect "spec"     ; file doesn't exist (no bundled gems)
     (spiffy-ruby-maybe-bundled-command "/somewhere/spec/foo.rb" "spec"))
@@ -75,7 +80,9 @@
        spiffy-ruby-last-test-dir)))
 
   (desc "run interactive merb")
-  (expect "bundle exec merb"
+  (expect (concat "bash -l -c 'cd "
+                  (spiffy-cwd)
+                  " && bundle exec merb")
     (flet ((make-comint (buffername program &optional startfile &rest args)
                         (setq _spiffy-ruby-test-run-interactive-merb-program program))
            ;; this is just to stop the test from screwing
@@ -83,7 +90,8 @@
            (switch-to-buffer-other-window (_)
                                           nil)
            (file-exists-p (file)
-                          (equal (expand-file-name (concat (spiffy-cwd) "Gemfile"))
+                          (message file)
+                      (equal (expand-file-name (concat (spiffy-cwd) "Gemfile"))
                                  (expand-file-name file))))
       (progn
         (setq _spiffy-ruby-test-run-interactive-merb-program "didn't even run make-comint")
@@ -158,7 +166,7 @@
                                         ; no point w/call-interactively since it's nerfed
        (spiffy-ruby-rdebug))))
 
-  (expect "bundle exec rdebug --emacs 3"  ; uses the bundled rdebug
+  (expect "bash -l -c 'cd /tmp && bundle exec rdebug --emacs 3'"  ; uses the bundled rdebug
     (let ((gud-rdebug-command-name "rdebug --emacs 3"))
       (flet ((rdebug (&optional args) gud-rdebug-command-name)
              (spiffy-ruby-bundle-root-for (x) "/tmp")
